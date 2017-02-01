@@ -126,6 +126,7 @@ class LocalManager(ManagerBoilerplate):
     print green('>> Done executing local installation process')
 
   def wp(self, subtask='', confFileName=None):
+
     if(subtask == ''):
       print red('Missing subtask')
       exit(1)
@@ -133,6 +134,12 @@ class LocalManager(ManagerBoilerplate):
     print yellow('\n>> Executing git "%s" subtask' % subtask)
 
     if(subtask == 'configure'):
+
+      fileToTemplateDict = {
+          'wp-config.php': 'wp-config.php',
+          '.env': 'dotenv'
+      }
+
       print yellow('\n>> Configuring "%s"' % confFileName)
       fields = [
           'DB_NAME',
@@ -147,18 +154,20 @@ class LocalManager(ManagerBoilerplate):
       if not confFileName:
         fileNames = ['wp-config.php', '.env']
         confFileName = fileNames[
-            whichOption(['wp-config.php', '.env'],
+            whichOption(fileNames,
                         'Which kind of configuration file?',
                         'Configuration filetype: '
                         )
         ]
 
+      templateName = fileToTemplateDict[confFileName]
+
       with lcd(floy.Core.paths['base']), hide('running'):
         if isfile(j(floy.Core.paths['base'], confFileName)) and confirm('Backup old configuration file?'):
-          lbash('mv %s %s.bak' % (confFileName, confFileName))
+          lbash('mv %s %s.bak' % (templateName, confFileName))
 
         lbash('cp -rf %s/templates/wp/%s %s' %
-              (floy.Core.paths['auxFiles'], confFileName, confFileName))
+              (floy.Core.paths['auxFiles'], templateName, confFileName))
 
         for field in fields:
           if(field == 'ENVIRONMENT'):

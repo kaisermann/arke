@@ -18,6 +18,7 @@ sql-dump-*.sql
 .env
 .env.*
 !.env.example
+!./.floy/templates/wp/.env
 
 # Vendor (e.g. Composer)
 vendor/*

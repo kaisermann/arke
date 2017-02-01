@@ -102,7 +102,7 @@ class RemoteManager(ManagerBoilerplate):
     if confirm('Upload .env?'):
       print yellow('\n>> Uploading .env')
       with cd(floy.Core.paths['shared']), hideOutput():
-        self.upload_template('.env',
+        self.upload_template('dotenv',
                              '.env',
                              template_dir='%s/templates/wp/' % floy.Core.paths['auxFiles'],
                              use_sudo=True,
@@ -113,7 +113,7 @@ class RemoteManager(ManagerBoilerplate):
                              })
 
         print cyan('>>> Generating salts on the .env file')
-        with hideOutput(), setting(warn_only=True):
+        with hideOutput(), settings(warn_only=True):
           run('wp dotenv salts regenerate')
         print green('>> Done uploading .env')
 
