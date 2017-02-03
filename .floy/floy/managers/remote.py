@@ -195,11 +195,11 @@ class RemoteManager(ManagerBoilerplate):
     clone_from = ''
 
     if ask('You want to continue with deploy "%s" to "%s"?' % (branch, env.name)):
-      release_name = '%s-%s' % (strftime('%Y%m%d%H%M%S'), branch)
+      release_name = '%s_%s' % (strftime('%Y-%m-%d_%H-%M-%S'), branch)
       print yellow('\n>> Creating new release')
       with hideOutput():
         lbash('git pull origin %s' % (branch))
-        lbash('git tag -a %s -m "%s"' % (release_name, env.name))
+        lbash('git tag -a "%s" -m "%s"' % (release_name, env.name))
         lbash('git push --tags')
       print green('>> Done creating new release')
 
