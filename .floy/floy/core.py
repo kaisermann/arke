@@ -12,9 +12,9 @@ from fabric.api import *
 from fabric.colors import *
 
 import tasks as Tasks
+from floy.helpers import lbash
 from floy.managers.local import LocalManager
 from floy.managers.remote import RemoteManager
-from floy.helpers import lbash
 
 # "consts"
 auxDirName = '.floy'
@@ -42,6 +42,7 @@ def init(path):
   reloadOptions()
   setattr(Tasks, 'local', hostMethodFactory('local', True))
 
+
 def checkCoreRequisites():
   shouldExit = False
   with hide('everything'), settings(warn_only=True):
@@ -53,6 +54,7 @@ def checkCoreRequisites():
   if(shouldExit):
     exit(1)
 
+
 def reloadOptions():
   global dynamicHosts
   global options
@@ -62,7 +64,7 @@ def reloadOptions():
   for oldHostMethodName in dynamicHosts:
     delattr(Tasks, oldHostMethodName)
 
-  if options != None:
+  if options:
     for hostName in options['hosts']:
       dynamicHosts.append(hostName)
       setattr(Tasks, hostName, hostMethodFactory(hostName, False))
