@@ -3,7 +3,7 @@
 ## Requirements
 * [Fabric](https://get.fabric.io/)
 * [Jinja2](http://jinja.pocoo.org/)
-* [Floy files](https://github.com/tuut/floy)
+* [Floy](https://github.com/tuut/floy)
 * A [SSH Config](http://nerderati.com/2011/03/17/simplify-your-life-with-an-ssh-config-file/)
 * A deployable project
 

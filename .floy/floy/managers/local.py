@@ -177,7 +177,7 @@ class LocalManager(ManagerBoilerplate):
             if(field == 'WP_PREFIX'):
               fieldVal = fieldVal or 'wp_'
 
-          lbash("sed -i \'\' -e\'s/{{ %s }}/%s/\' %s" %
+          lbash("sed -i '' -e 's|{{ %s }}|%s|' %s" %
                 (field, fieldVal, confFileName))
 
       if(confFileName == '.env'):
