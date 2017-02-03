@@ -7,6 +7,19 @@ from fabric.colors import *
 from fabric.operations import local
 
 
+def ask(question):
+  while True:
+    response = prompt("%s [y/n] " % question).lower()
+
+    if response in ['y', 'yes']:
+      return True
+
+    if response in ['n', 'no']:
+      return False
+
+    print red("I didn't understand you. Please specify '(y)es' or '(n)o'.\n")
+
+
 def hideOutput():
   return hide('running', 'output')
 
@@ -70,7 +83,7 @@ def runCommandList(list, rootPath='', isLocal=False, insertNewline=False):
       isWpInstallation = lbash('wp core version')
 
     if(isWpInstallation.return_code == 0):
-      while confirm(yellow('Run wp cli search and replace?')):
+      while ask(yellow('Run wp cli search and replace?')):
         oldTerm = raw_input('Old term: ')
         newTerm = raw_input('New term: ')
         lbash('wp search-replace "%s" "%s"' % (oldTerm, newTerm))

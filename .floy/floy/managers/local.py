@@ -10,7 +10,6 @@ from os.path import isdir, isfile, relpath
 
 from fabric.api import *
 from fabric.colors import *
-from fabric.contrib.console import confirm
 
 import floy
 from floy.helpers import *
@@ -23,7 +22,7 @@ projectTypeValues = ['html', 'php', 'simple-wordpress', 'bedrock-wordpress']
 class LocalManager(ManagerBoilerplate):
 
   def setup(self):
-    if not confirm('Setup a new project at "%s"?' % floy.Core.paths['base']):
+    if not ask('Setup a new project at "%s"?' % floy.Core.paths['base']):
       exit(0)
 
     projectType = projectTypeValues[
@@ -87,12 +86,12 @@ class LocalManager(ManagerBoilerplate):
       jsonFileExists = isfile(j(floy.Core.paths['base'], 'floy.json'))
 
       if(jsonFileExists):
-        overwriteJson = confirm(
+        overwriteJson = ask(
             '"floy.json" already exists. Overwrite it with the respective project type template?')
 
       with lcd(floy.Core.paths['base']):
         if(overwriteJson):
-          if(jsonFileExists and confirm('Backup the current "floy.json"?')):
+          if(jsonFileExists and ask('Backup the current "floy.json"?')):
             lbash('cp floy.json floy.json.bk')
           lbash('cp -f %s/templates/floy/%s.json floy.json' %
                 (floy.Core.paths['auxFiles'], projectType))
@@ -103,7 +102,7 @@ class LocalManager(ManagerBoilerplate):
       print green('>> Done updating floy.json')
 
       print ''
-      confirm('Should configure the project git repository?') and self.git('setup')
+      ask('Should configure the project git repository?') and self.git('setup')
 
       self.install()
 
@@ -117,10 +116,10 @@ class LocalManager(ManagerBoilerplate):
                    True)
 
     with lcd(floy.Core.paths['base']), hide('running', 'output'):
-      if(projectType == 'simple-wordpress' and confirm('Configure wp-config.php?')):
+      if(projectType == 'simple-wordpress' and ask('Configure wp-config.php?')):
         self.wp('configure', 'wp-config.php')
 
-      elif(projectType == 'bedrock-wordpress' and confirm('Configure .env?')):
+      elif(projectType == 'bedrock-wordpress' and ask('Configure .env?')):
         self.wp('configure', '.env')
 
     print green('>> Done executing local installation process')
@@ -163,7 +162,7 @@ class LocalManager(ManagerBoilerplate):
       templateName = fileToTemplateDict[confFileName]
 
       with lcd(floy.Core.paths['base']), hide('running'):
-        if isfile(j(floy.Core.paths['base'], confFileName)) and confirm('Backup old configuration file?'):
+        if isfile(j(floy.Core.paths['base'], confFileName)) and ask('Backup old configuration file?'):
           lbash('mv %s %s.bak' % (templateName, confFileName))
 
         lbash('cp -rf %s/templates/wp/%s %s' %
@@ -205,7 +204,7 @@ class LocalManager(ManagerBoilerplate):
       print red('Do not do this with an already commited project. The ".git" folder will be DELETED.')
       repoUrl = floy.Core.options['project']['repo']
 
-      if not confirm('Use the url from "floy.json" (%s)?' % repoUrl):
+      if not ask('Use the url from "floy.json" (%s)?' % repoUrl):
         repoUrl = raw_input('\nType the repository origin url: ')
         print cyan('\n>>> Updating repository origin url on floy.json')
         floy.Core.options['project']['repo'] = repoUrl
@@ -228,7 +227,7 @@ class LocalManager(ManagerBoilerplate):
     return returnValue
 
   def reset(self):
-    if confirm('Should delete everything but "floy" files?'):
+    if ask('Should delete everything but "floy" files?'):
       print '\nType "0" to cancel\n'
       randomSum = -1
       randomNumber1 = randomNumber2 = 0
@@ -297,7 +296,7 @@ class LocalManager(ManagerBoilerplate):
       print green('>> Done dumping to "%s"' % localDir)
 
       print ''
-      if confirm('Import last dump to a local database?'):
+      if ask('Import last dump to a local database?'):
         dbuser = raw_input('Local Database user: ')
         dbpass = raw_input('Local Database password: ')
         dbname = raw_input('Local Database name: ')

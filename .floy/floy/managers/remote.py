@@ -4,7 +4,6 @@ from time import strftime
 
 from fabric.api import *
 from fabric.colors import *
-from fabric.contrib.console import confirm
 from fabric.contrib.files import upload_template as orig_upload_template
 from fabric.contrib.files import contains, exists, is_link, sed
 from fabric.contrib.project import upload_project
@@ -29,7 +28,7 @@ class RemoteManager(ManagerBoilerplate):
       sitesEnabled = join(floy.Core.paths['nginx'], 'sites-enabled', floy.Core.getEnvOption('name'))
 
       # nginx setup
-      if(isInstalled.has_key('ee') and isInstalled['ee'] and confirm('Create website with EasyEngine?')):
+      if(isInstalled.has_key('ee') and isInstalled['ee'] and ask('Create website with EasyEngine?')):
         installationMode = 'ee'
         typeFlags = ['html', 'php', 'mysql', 'wp', 'wpfc']
 
@@ -54,7 +53,7 @@ class RemoteManager(ManagerBoilerplate):
 
         print green('>> Done creating site with EasyEngine')
 
-      elif confirm('Run nginx configuration setup instead?'):
+      elif ask('Run nginx configuration setup instead?'):
         print yellow('\n>> Creating site with floy\'s nginx template')
         with hideOutput():
           print cyan('>>> Uploading nginx.conf -> shared/nginx.conf')
@@ -94,12 +93,13 @@ class RemoteManager(ManagerBoilerplate):
       defaultWPConfig = '%s/wp-config.php' % floy.Core.paths['project']
       if(exists(defaultWPConfig)):
         print yellow('\n>> Moving EasyEngine\'s default wp-config.php to shared folder')
-        sudo('mv %s %s/' % (defaultWPConfig, floy.Core.paths['shared']))
+        with hideOutput():
+          sudo('mv %s %s/' % (defaultWPConfig, floy.Core.paths['shared']))
         print green('>> Done moving default wp-config.php')
 
     # .env
     print ''
-    if confirm('Upload .env?'):
+    if ask('Upload .env?'):
       print yellow('\n>> Uploading .env')
       with cd(floy.Core.paths['shared']), hideOutput():
         self.upload_template('dotenv',
@@ -117,7 +117,7 @@ class RemoteManager(ManagerBoilerplate):
           run('wp dotenv salts regenerate')
         print green('>> Done uploading .env')
 
-    elif confirm('Upload wp-config.php?'):
+    elif ask('Upload wp-config.php?'):
       print yellow('\n>> Uploading wp-config.php')
       with cd(floy.Core.paths['shared']), hideOutput():
         self.upload_template('wp-config.php',
@@ -181,9 +181,9 @@ class RemoteManager(ManagerBoilerplate):
 
       isInstalled['ee'] = result.return_code == 0
 
-      if not isInstalled['ee'] and confirm('Should install EasyEngine? '):
+      if not isInstalled['ee'] and ask('Should install EasyEngine? '):
         print yellow('\n>> Installing EasyEngine')
-        run('wget -qO ee rt.cx/ee && sudo bash ee')
+        sudo('wget -qO ee rt.cx/ee && sudo bash ee')
         print green('>> EasyEngine installed')
       else:
         print green('>> EasyEngine already installed')
@@ -194,7 +194,7 @@ class RemoteManager(ManagerBoilerplate):
     release_name = ''
     clone_from = ''
 
-    if confirm('You want to continue with deploy "%s" to "%s"?' % (branch, env.name)):
+    if ask('You want to continue with deploy "%s" to "%s"?' % (branch, env.name)):
       release_name = '%s-%s' % (strftime('%Y%m%d%H%M%S'), branch)
       print yellow('\n>> Creating new release')
       with hideOutput():
