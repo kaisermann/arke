@@ -45,7 +45,7 @@ class RemoteManager(ManagerBoilerplate):
         with hideOutput():
           # Appends /current to the server block root path
           sed(sitesAvailable, 'root .*;', 'root %s;' % floy.Core.paths['webRoot'],
-              limit='', use_sudo=True, backup='', flags='i', shell=False)
+              limit='', use_sudo=True, backup='', flags='i', shell='/bin/bash')
 
           # Deletes default files
           if(len(floy.Core.paths['publicHTML']) > 0 and floy.Core.paths['publicHTML'] != '/'):
