@@ -13,7 +13,7 @@ from fabric.colors import *
 
 import tasks as Tasks
 from floy.helpers import lbash
-from floy.managers.local import LocalManager
+from floy.managers.project import ProjectManager
 from floy.managers.remote import RemoteManager
 
 # "consts"
@@ -40,7 +40,7 @@ def init(path):
   env.forward_agent = True
 
   reloadOptions()
-  setattr(Tasks, 'local', hostMethodFactory('local', True))
+  setattr(Tasks, 'project', hostMethodFactory('project', True))
 
 
 def checkCoreRequisites():
@@ -88,8 +88,8 @@ def loadOptions(path=None):
   jsonFilePath = join(path, 'floy.json')
 
   if(not isfile(jsonFilePath)):
-    if('local' not in env.tasks or 'setup' not in env.tasks and 'reset' not in env.tasks):
-      print red('No "floy.json" found.\nRun "fab local setup"')
+    if('project' not in env.tasks or 'setup' not in env.tasks and 'reset' not in env.tasks):
+      print red('No "floy.json" found.\nRun "fab project setup"')
       exit(1)
   else:
     ''' Reads the floy.json file and strips comments '''
@@ -107,7 +107,7 @@ def setPaths():
   global paths
   paths['auxFiles'] = join(paths['base'], auxDirName)
 
-  if(env.name != 'local'):
+  if(env.name != 'project'):
     paths['nginx'] = '/etc/nginx'
     env.hosts = options['hosts'][env.name]['hosts']
     paths['project'] = join(getEnvOption('projectDir'), getEnvOption('name')).rstrip('/')
@@ -121,12 +121,12 @@ def setPaths():
 # Static Methods
 
 
-def hostMethodFactory(hostName, isLocal=False):
+def hostMethodFactory(hostName, isProjectEnv=False):
   def host(*args):
     global manager
     env.name = hostName
-    if(isLocal):
-      manager = LocalManager()
+    if(isProjectEnv):
+      manager = ProjectManager()
     else:
       manager = RemoteManager()
       getSudoPassword()

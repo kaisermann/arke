@@ -19,7 +19,7 @@ projectTypes = ['HTML', 'PHP', 'Simple WordPress', 'Bedrock WordPress']
 projectTypeValues = ['html', 'php', 'simple-wordpress', 'bedrock-wordpress']
 
 
-class LocalManager(ManagerBoilerplate):
+class ProjectManager(ManagerBoilerplate):
 
   def setup(self):
     if not ask('Setup a new project at "%s"?' % floy.Core.paths['base']):
@@ -107,7 +107,7 @@ class LocalManager(ManagerBoilerplate):
       self.install()
 
   def install(self):
-    print yellow('\n>> Executing local installation process')
+    print yellow('\n>> Executing project installation process')
     projectType = floy.Core.options['project']['type']
 
     runCommandList(floy.Core.options['project']['cmds']['install'],
@@ -122,7 +122,7 @@ class LocalManager(ManagerBoilerplate):
       elif(projectType == 'bedrock-wordpress' and ask('Configure .env?')):
         self.wp('configure', '.env')
 
-    print green('>> Done executing local installation process')
+    print green('>> Done executing project installation process')
 
   def wp(self, subtask='', confFileName=None):
 
@@ -264,7 +264,7 @@ class LocalManager(ManagerBoilerplate):
 
   def import_db(self):
     if(env.host == None):
-      print red('Missing -H {host} flag.\nUsage: "fab local import_db -H hostToImportFrom" ')
+      print red('Missing -H {host} flag.\nUsage: "fab project import_db -H hostToImportFrom" ')
       exit(1)
     print yellow('\n>> Starting DB import process from host(s): %s' % env.host)
 

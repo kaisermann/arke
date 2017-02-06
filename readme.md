@@ -13,16 +13,6 @@
 fab {environment} {task} [-u {user}] [-p {password}]
 
 
-Local-only:
-
-fab local setup
-fab local install
-fab local reset
-fab local import_db
-fab local git:setup
-fab local wp:configure
-
-
 Remote-only:
 
 fab {environment} setup
@@ -32,6 +22,16 @@ fab {environment} fixPermissions
 fab {environment} cleanup_releases
 fab {environment} service_restart
 fab {environment} service_reload
+
+
+Project-environment-only:
+
+fab project setup
+fab project install
+fab project reset
+fab project import_db
+fab project git:setup
+fab project wp:configure
 ```
 
 ## Documentation
