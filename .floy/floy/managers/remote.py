@@ -262,11 +262,12 @@ class RemoteManager(ManagerBoilerplate):
         self.service_reload(service)
       print green('>> Done reloading services')
 
-      print yellow('\n>> Running after-deploy commands')
+    print yellow('\n>> Running after-deploy commands')
+    with hide('running'):
       runCommandList(floy.Core.options['project']['cmds']['afterDeploy'],
                      curReleaseDir,
                      False)
-      print green('>> Done running after-deploy commands')
+    print green('>> Done running after-deploy commands')
 
     # Links latest release to the current directory
     print yellow('\n>> Linking "current" directory to newest release')
