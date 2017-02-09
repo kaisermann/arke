@@ -1,7 +1,7 @@
 # Floy documentation
 
 ## Requirements
-* [Fabric](https://get.fabric.io/)
+* [Fabric](http://www.fabfile.org/)
 * [Jinja2](http://jinja.pocoo.org/)
 * [Floy](https://github.com/tuut/floy)
 * A [SSH Config](http://nerderati.com/2011/03/17/simplify-your-life-with-an-ssh-config-file/)
@@ -10,7 +10,7 @@
 ## Usage
 
 ```
-fab {environment} {task} [-u {user}] [-p {password}]
+fab {environment/scope} {task} [-u {user}] [-p {password}]
 
 
 Remote-only:
