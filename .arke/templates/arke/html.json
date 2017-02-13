@@ -1,7 +1,7 @@
 {
   "project": {
     "repo": "git@github.com:user/repo.git",
-    "type": "php",
+    "type": "html",
     "fileStructure": {
       "shared": [
         ["robots.txt"]
@@ -15,7 +15,7 @@
         ["", "yarn"]
       ],
       "afterDeploy": [
-        ["", "rm -rf fabfile.py floy.json .floy readme.md .editorconfig"]
+        ["", "rm -rf fabfile.py arke.json .arke readme.md .editorconfig"]
       ]
     },
     "maxReleases": 5

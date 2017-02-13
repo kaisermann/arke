@@ -12,12 +12,12 @@ from fabric.api import *
 from fabric.colors import *
 
 import tasks as Tasks
-from floy.helpers import lbash
-from floy.managers.project import ProjectManager
-from floy.managers.remote import RemoteManager
+from arke.helpers import lbash
+from arke.managers.project import ProjectManager
+from arke.managers.remote import RemoteManager
 
 # "consts"
-auxDirName = '.floy'
+auxDirName = '.arke'
 
 # dynamic
 manager = None
@@ -71,7 +71,7 @@ def reloadOptions():
 
 
 def saveOptions():
-  with open(join(paths['base'], 'floy.json'), 'w') as outfile:
+  with open(join(paths['base'], 'arke.json'), 'w') as outfile:
     json.dump(options, outfile, indent=2)
 
   ''' Refresh all loaded paths '''
@@ -85,14 +85,14 @@ def loadOptions(path=None):
   if (path == None):
     path = paths['base']
 
-  jsonFilePath = join(path, 'floy.json')
+  jsonFilePath = join(path, 'arke.json')
 
   if(not isfile(jsonFilePath)):
     if('project' not in env.tasks or 'setup' not in env.tasks and 'reset' not in env.tasks):
-      print red('No "floy.json" found.\nRun "fab project setup"')
+      print red('No "arke.json" found.\nRun "fab project setup"')
       exit(1)
   else:
-    ''' Reads the floy.json file and strips comments '''
+    ''' Reads the arke.json file and strips comments '''
     deployFile = open(jsonFilePath)
     deployFileContent = deployFile.read()
     deployFileContent = re.sub(r'\\\n', '', deployFileContent)

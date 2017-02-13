@@ -8,9 +8,9 @@ from fabric.contrib.files import upload_template as orig_upload_template
 from fabric.contrib.files import contains, exists, is_link, sed
 from fabric.contrib.project import upload_project
 
-import floy as floy
-from floy.helpers import *
-from floy.managers.boilerplate import ManagerBoilerplate
+import arke as arke
+from arke.helpers import *
+from arke.managers.boilerplate import ManagerBoilerplate
 
 
 class RemoteManager(ManagerBoilerplate):
@@ -23,9 +23,9 @@ class RemoteManager(ManagerBoilerplate):
     if(isInstalled.has_key('nginx') and isInstalled['nginx']):
       installationMode = 'manual'
 
-      sitesAvailable = join(floy.Core.paths['nginx'], 'sites-available',
-                            floy.Core.getEnvOption('name'))
-      sitesEnabled = join(floy.Core.paths['nginx'], 'sites-enabled', floy.Core.getEnvOption('name'))
+      sitesAvailable = join(arke.Core.paths['nginx'], 'sites-available',
+                            arke.Core.getEnvOption('name'))
+      sitesEnabled = join(arke.Core.paths['nginx'], 'sites-enabled', arke.Core.getEnvOption('name'))
 
       # nginx setup
       if(isInstalled.has_key('ee') and isInstalled['ee'] and ask('Create website with EasyEngine?')):
@@ -40,35 +40,35 @@ class RemoteManager(ManagerBoilerplate):
 
         with hide('warnings'), settings(warn_only=True):
           sudo('ee site create --%s %s' %
-               (siteType, floy.Core.getEnvOption('name')))
+               (siteType, arke.Core.getEnvOption('name')))
 
         with hideOutput():
           # Appends /current to the server block root path
-          sed(sitesAvailable, 'root .*;', 'root %s;' % floy.Core.paths['webRoot'],
+          sed(sitesAvailable, 'root .*;', 'root %s;' % arke.Core.paths['webRoot'],
               limit='', use_sudo=True, backup='', flags='i', shell='/bin/bash')
 
           # Deletes default files
-          if(len(floy.Core.paths['publicHTML']) > 0 and floy.Core.paths['publicHTML'] != '/'):
-            sudo('rm -rf %s/*' % floy.Core.paths['publicHTML'])
+          if(len(arke.Core.paths['publicHTML']) > 0 and arke.Core.paths['publicHTML'] != '/'):
+            sudo('rm -rf %s/*' % arke.Core.paths['publicHTML'])
 
         print green('>> Done creating site with EasyEngine')
 
       elif ask('Run nginx configuration setup instead?'):
-        print yellow('\n>> Creating site with floy\'s nginx template')
+        print yellow('\n>> Creating site with arke\'s nginx template')
         with hideOutput():
           print cyan('>>> Uploading nginx.conf -> shared/nginx.conf')
-          put('%s/templates/nginx/nginx.conf' % floy.Core.paths['auxFiles'],
-              join(floy.Core.paths['shared'], 'nginx.conf'), use_sudo=True)
+          put('%s/templates/nginx/nginx.conf' % arke.Core.paths['auxFiles'],
+              join(arke.Core.paths['shared'], 'nginx.conf'), use_sudo=True)
 
-          print cyan('>>> Uploading nginx server block -> etc/sites-available/%s' % floy.Core.getEnvOption('name'))
+          print cyan('>>> Uploading nginx server block -> etc/sites-available/%s' % arke.Core.getEnvOption('name'))
           self.upload_template('site',
                                sitesAvailable,
-                               template_dir='%s/templates/nginx' % floy.Core.paths['auxFiles'],
+                               template_dir='%s/templates/nginx' % arke.Core.paths['auxFiles'],
                                use_sudo=True,
                                use_jinja=True,
                                context={
-                                   'HOSTNAME': floy.Core.getEnvOption('hostnames'),
-                                   'ROOT': floy.Core.paths['webRoot'],
+                                   'HOSTNAME': arke.Core.getEnvOption('hostnames'),
+                                   'ROOT': arke.Core.paths['webRoot'],
                                })
 
           print cyan('>>> Linking sites-available -> sites-enabled')
@@ -79,37 +79,37 @@ class RemoteManager(ManagerBoilerplate):
           sudo('ln -sfv %s %s' % (sitesAvailable, sitesEnabled))
 
           self.service_reload('nginx')
-        print green('>> Done creating site with floy\'s nginx template')
+        print green('>> Done creating site with arke\'s nginx template')
 
     # Creates shared/release directory structure
     print yellow('\n>> Creating shared and releases directories')
     with hideOutput():
-      sudo('mkdir -p %s %s' % (floy.Core.paths['releases'],
-                               join(floy.Core.paths['shared'], 'uploads')))
-      sudo('touch %s/robots.txt' % floy.Core.paths['shared'])
+      sudo('mkdir -p %s %s' % (arke.Core.paths['releases'],
+                               join(arke.Core.paths['shared'], 'uploads')))
+      sudo('touch %s/robots.txt' % arke.Core.paths['shared'])
     print green('>> Done creating shared and releases directories')
 
     if(installationMode == 'ee'):
-      defaultWPConfig = '%s/wp-config.php' % floy.Core.paths['project']
+      defaultWPConfig = '%s/wp-config.php' % arke.Core.paths['project']
       if(exists(defaultWPConfig)):
         print yellow('\n>> Moving EasyEngine\'s default wp-config.php to shared folder')
         with hideOutput():
-          sudo('mv %s %s/' % (defaultWPConfig, floy.Core.paths['shared']))
+          sudo('mv %s %s/' % (defaultWPConfig, arke.Core.paths['shared']))
         print green('>> Done moving default wp-config.php')
 
     # .env
     print ''
     if ask('Upload .env?'):
       print yellow('\n>> Uploading .env')
-      with cd(floy.Core.paths['shared']), hideOutput():
+      with cd(arke.Core.paths['shared']), hideOutput():
         self.upload_template('dotenv',
                              '.env',
-                             template_dir='%s/templates/wp/' % floy.Core.paths['auxFiles'],
+                             template_dir='%s/templates/wp/' % arke.Core.paths['auxFiles'],
                              use_sudo=True,
                              use_jinja=True,
                              context={
                                  'ENVIRONMENT': env.name,
-                                 'MAIN_URL': floy.Core.getEnvOption('name')
+                                 'MAIN_URL': arke.Core.getEnvOption('name')
                              })
 
         print cyan('>>> Generating salts on the .env file')
@@ -119,10 +119,10 @@ class RemoteManager(ManagerBoilerplate):
 
     elif ask('Upload wp-config.php?'):
       print yellow('\n>> Uploading wp-config.php')
-      with cd(floy.Core.paths['shared']), hideOutput():
+      with cd(arke.Core.paths['shared']), hideOutput():
         self.upload_template('wp-config.php',
                              'wp-config.php',
-                             template_dir='%s/templates/wp/' % floy.Core.paths['auxFiles'],
+                             template_dir='%s/templates/wp/' % arke.Core.paths['auxFiles'],
                              use_sudo=True,
                              use_jinja=True,
                              context={
@@ -207,22 +207,22 @@ class RemoteManager(ManagerBoilerplate):
       self.afterDeploy(release_name)
 
   def cloneRelease(self, release_name):
-    curReleaseDir = join(floy.Core.paths['releases'], release_name)
+    curReleaseDir = join(arke.Core.paths['releases'], release_name)
 
     print yellow('\n>> Cloning newest release on remote server')
     with hide('running'):
       run('git clone --branch "%s" %s "%s"' %
-          (release_name, floy.Core.options['project']['repo'], curReleaseDir))
+          (release_name, arke.Core.options['project']['repo'], curReleaseDir))
     print green('>> Done cloning newest release')
 
     print yellow('\n>> Creating links between shared files')
-    for arr in floy.Core.options['project']['fileStructure']['shared']:
+    for arr in arke.Core.options['project']['fileStructure']['shared']:
 
       if len(arr) == 1:
         arr = [arr[0], arr[0]]
 
       nodeOriginFullPath = join(curReleaseDir, arr[0])
-      nodeTargetFullPath = join(floy.Core.paths['shared'], arr[1])
+      nodeTargetFullPath = join(arke.Core.paths['shared'], arr[1])
 
       print cyan('>>> Linking: current/%s -> shared/%s' % tuple(arr))
       with hideOutput():
@@ -234,12 +234,12 @@ class RemoteManager(ManagerBoilerplate):
     print green('>> Done linking shared files and folders')
 
     print yellow('\n>> Sending all files/folders listed on "toUpload"')
-    for arr in floy.Core.options['project']['fileStructure']['toUpload']:
+    for arr in arke.Core.options['project']['fileStructure']['toUpload']:
 
       if len(arr) == 1:
         arr = [arr[0], arr[0]]
 
-      nodeOriginFullPath = join(floy.Core.paths['base'], arr[0])
+      nodeOriginFullPath = join(arke.Core.paths['base'], arr[0])
       nodeTargetFullPath = join(curReleaseDir, arr[1])
 
       print cyan('>>> Uploading: %s -> %s' % tuple(arr))
@@ -249,22 +249,22 @@ class RemoteManager(ManagerBoilerplate):
     print green('>> Done uploading files and folders')
 
   def afterDeploy(self, release_name):
-    curReleaseDir = join(floy.Core.paths['releases'], release_name)
+    curReleaseDir = join(arke.Core.paths['releases'], release_name)
 
     with hideOutput(), settings(warn_only=True):
       print yellow('\n>> Restarting services')
-      for service in floy.Core.getEnvOption('services')['toRestart']:
+      for service in arke.Core.getEnvOption('services')['toRestart']:
         self.service_restart(service)
       print green('>> Done restarting services')
 
       print yellow('\n>> Reloading services')
-      for service in floy.Core.getEnvOption('services')['toReload']:
+      for service in arke.Core.getEnvOption('services')['toReload']:
         self.service_reload(service)
       print green('>> Done reloading services')
 
     print yellow('\n>> Running after-deploy commands')
     with hide('running'):
-      runCommandList(floy.Core.options['project']['cmds']['afterDeploy'],
+      runCommandList(arke.Core.options['project']['cmds']['afterDeploy'],
                      curReleaseDir,
                      False)
     print green('>> Done running after-deploy commands')
@@ -273,26 +273,26 @@ class RemoteManager(ManagerBoilerplate):
     print yellow('\n>> Linking "current" directory to newest release')
 
     with hideOutput():
-      if is_link(floy.Core.paths['current']):
-        sudo('unlink %s' % (floy.Core.paths['current']))
-      elif exists(floy.Core.paths['current']):
-        sudo('rm -rf %s' % (floy.Core.paths['current']))
+      if is_link(arke.Core.paths['current']):
+        sudo('unlink %s' % (arke.Core.paths['current']))
+      elif exists(arke.Core.paths['current']):
+        sudo('rm -rf %s' % (arke.Core.paths['current']))
 
-      sudo('ln -sfv %s %s' % (curReleaseDir, floy.Core.paths['current']))
+      sudo('ln -sfv %s %s' % (curReleaseDir, arke.Core.paths['current']))
       print green('>> Done linking "current" directory')
 
     self.fixPermissions()
 
-    self.cleanup_releases(floy.Core.options['project']['maxReleases'])
+    self.cleanup_releases(arke.Core.options['project']['maxReleases'])
 
   def fixPermissions(self, folderPath=0):
     if(folderPath == 0):
-      folderPath = floy.Core.paths['project']
+      folderPath = arke.Core.paths['project']
 
     print yellow('\n>> Fixing project\'s permissions at \'%s\'' % folderPath)
     with hide('everything'):
       sudo('chown -RfHh %s:%s %s' %
-           (floy.Core.getEnvOption('webServerUser'), floy.Core.getEnvOption('webServerGroup'), folderPath))
+           (arke.Core.getEnvOption('webServerUser'), arke.Core.getEnvOption('webServerGroup'), folderPath))
       with cd(folderPath):
         sudo('find . -type d -print0 | xargs -0 chmod 0775')
         sudo('find . -type f -print0 | xargs -0 chmod 0664')
@@ -306,11 +306,11 @@ class RemoteManager(ManagerBoilerplate):
 
       for release in releases[int(keep):]:
         release = release.strip()
-        sudo('rm -rf %s/%s' % (floy.Core.paths['releases'], release))
+        sudo('rm -rf %s/%s' % (arke.Core.paths['releases'], release))
     print green('>> Done removing old releases')
 
   def list_releases(self):
-    with cd(floy.Core.paths['releases']):
+    with cd(arke.Core.paths['releases']):
       return run('ls -1 | sort').split('\n')
 
   def service_restart(self, name):
