@@ -1,26 +1,21 @@
 {
   "project": {
     "repo": "git@github.com:user/repo.git",
-    "type": "simple-wordpress",
+    "type": "php",
     "fileStructure": {
       "shared": [
-        ["robots.txt"],
-        [".htaccess"],
-        ["wp-config.php"],
-        ["wp-content/uploads", "uploads"]
+        ["robots.txt"]
       ],
       "toUpload": [
-        ["wp-content/themes/sepha/dist", "wp-content/themes/sepha/"]
+        ["./dist", "./"]
       ]
     },
     "cmds": {
       "install": [
-        ["wp-content/themes/sepha", "composer install"],
-        ["wp-content/themes/sepha", "yarn"]
+        ["", "yarn"]
       ],
       "afterDeploy": [
-        ["", "rm -rf fabfile.py floy.json .floy readme.md .editorconfig"],
-        ["wp-content/themes/sepha", "composer install"]
+        ["", "rm -rf fabfile.py arke.json .arke readme.md .editorconfig"]
       ]
     },
     "maxReleases": 5

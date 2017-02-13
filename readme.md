@@ -1,9 +1,9 @@
-# Floy documentation
+# Arke documentation
 
 ## Requirements
 * [Fabric](http://www.fabfile.org/)
 * [Jinja2](http://jinja.pocoo.org/)
-* [Floy](https://github.com/tuut/floy)
+* [Arke](https://github.com/tuut/arke)
 * A [SSH Config](http://nerderati.com/2011/03/17/simplify-your-life-with-an-ssh-config-file/)
 * A deployable project
 
@@ -36,7 +36,7 @@ fab project wp:configure
 
 ## Documentation
 
-### `floy.json` example
+### `arke.json` example
 
 ```json
 {
@@ -51,18 +51,18 @@ fab project wp:configure
         ["web/app/uploads", "uploads"]
       ],
       "toUpload": [
-        ["web/app/themes/sepha/dist", "web/app/themes/sepha/"]
+        ["web/app/themes/selene/dist", "web/app/themes/selene/"]
       ]
     },
     "cmds": {
       "install": [
         ["", "composer install"],
-        ["web/app/themes/sepha", "composer install"]
+        ["web/app/themes/selene", "composer install"]
       ],
       "afterDeploy": [
-        ["", "rm -rf fabfile.py floy.json readme.md .editorconfig"],
+        ["", "rm -rf fabfile.py arke.json readme.md .editorconfig"],
         ["", "composer install"],
-        ["web/app/themes/sepha", "composer install"]
+        ["web/app/themes/selene", "composer install"]
       ],      
     },
     "maxReleases": 5
@@ -129,7 +129,7 @@ fab project wp:configure
     <br><br>
     <strong>Examples:</strong>
     <br><br>
-    ["web/app/themes/sepha/dist", "web/app/themes/sepha/"] uploads the local dist folder to the remote web/app/themes/sepha/ directory.
+    ["web/app/themes/selene/dist", "web/app/themes/selene/"] uploads the local dist folder to the remote web/app/themes/selene/ directory.
     </td>
   </tr>
   <tr>
@@ -142,7 +142,7 @@ fab project wp:configure
     <br><br>
     ["", "composer install"] runs a composer install on the project's root.
     <br><br>
-    ["web/app/themes/sepha", "composer install"] runs a composer install on the web/app/themes/sepha directory.
+    ["web/app/themes/selene", "composer install"] runs a composer install on the web/app/themes/selene directory.
     </td>
   </tr>
   <tr>
@@ -153,9 +153,9 @@ fab project wp:configure
     <br><br>
     <strong>Examples:</strong>
     <br><br>
-    ["", "rm -rf fabfile.py floy.json readme.md .editorconfig"] runs a rm command on the project's root.
+    ["", "rm -rf fabfile.py arke.json readme.md .editorconfig"] runs a rm command on the project's root.
     <br><br>
-    ["web/app/themes/sepha", "composer install"] runs a composer install on the web/app/themes/sepha directory.
+    ["web/app/themes/selene", "composer install"] runs a composer install on the web/app/themes/selene directory.
     </td>
   </tr>
   <tr>

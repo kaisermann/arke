@@ -11,9 +11,9 @@ from os.path import isdir, isfile, relpath
 from fabric.api import *
 from fabric.colors import *
 
-import floy
-from floy.helpers import *
-from floy.managers.boilerplate import ManagerBoilerplate
+import arke
+from arke.helpers import *
+from arke.managers.boilerplate import ManagerBoilerplate
 
 projectTypes = ['HTML', 'PHP', 'Simple WordPress', 'Bedrock WordPress']
 projectTypeValues = ['html', 'php', 'simple-wordpress', 'bedrock-wordpress']
@@ -22,7 +22,7 @@ projectTypeValues = ['html', 'php', 'simple-wordpress', 'bedrock-wordpress']
 class ProjectManager(ManagerBoilerplate):
 
   def setup(self):
-    if not ask('Setup a new project at "%s"?' % floy.Core.paths['base']):
+    if not ask('Setup a new project at "%s"?' % arke.Core.paths['base']):
       exit(0)
 
     projectType = projectTypeValues[
@@ -32,16 +32,16 @@ class ProjectManager(ManagerBoilerplate):
                     )
     ]
 
-    targetDir = floy.Core.paths['base']
+    targetDir = arke.Core.paths['base']
 
     with hide('running'):
       with lcd(targetDir):
         if(projectType == 'html' or projectType == 'php'):  # HTML OR PHP
-          print yellow('\n>> Downloading phase')
+          print yellow('\n>> Downloading crius')
           lbash(
-              'git clone --depth=1 --branch=master git@github.com:kaisermann/phase.git phase;')
-          lbash('rm -rf phase/{.git,.gitignore,readme.md}; mv phase/* .; rm -rf phase;', True)
-          print green('>> Done downloading phase')
+              'git clone --depth=1 --branch=master git@github.com:kaisermann/crius.git crius;')
+          lbash('rm -rf crius/{.git,.gitignore,readme.md}; mv crius/* .; rm -rf crius;', True)
+          print green('>> Done downloading crius')
 
           print yellow('\n>> Creating basic file structure')
           if(projectType == 'php'):
@@ -58,11 +58,11 @@ class ProjectManager(ManagerBoilerplate):
           lbash('rm -rf license.txt readme.html wp-config*.php wordpress/;')
           print green('>> Done downloading WordPress')
 
-          print yellow('\n>> Downloading sepha')
+          print yellow('\n>> Downloading selene')
           lbash(
-              'git clone --depth=1 --branch=master git@github.com:kaisermann/sepha.git sepha;')
-          lbash('rm -rf sepha/.git; mv sepha wp-content/themes/;', True)
-          print green('>> Done downloading sepha')
+              'git clone --depth=1 --branch=master git@github.com:kaisermann/selene.git selene;')
+          lbash('rm -rf selene/.git; mv selene wp-content/themes/;', True)
+          print green('>> Done downloading selene')
 
         elif(projectType == 'bedrock-wordpress'):  # Bedrock
           print yellow('\n>> Downloading Bedrock')
@@ -70,36 +70,36 @@ class ProjectManager(ManagerBoilerplate):
               'git clone --depth=1 --branch=master git@github.com:roots/bedrock.git bedrock;')
           print green('>> Done downloading Bedrock')
 
-          print yellow('\n>> Downloading sepha')
+          print yellow('\n>> Downloading selene')
           lbash(
-              'git clone --depth=1 --branch=master git@github.com:kaisermann/sepha.git sepha;')
-          print green('>> Done downloading sepha')
+              'git clone --depth=1 --branch=master git@github.com:kaisermann/selene.git selene;')
+          print green('>> Done downloading selene')
 
           print yellow('\n>> Arranging project files')
           lbash(
               'rm -rf bedrock/{.git,.gitignore,.github,*.md}; mv bedrock/* ./; rm -rf bedrock;', True)
-          lbash('rm -rf sepha/.git; mv sepha web/app/themes/;', True)
+          lbash('rm -rf selene/.git; mv selene web/app/themes/;', True)
           print green('>> Done arranging project files')
 
-      print yellow('\n>> Updating floy.json')
+      print yellow('\n>> Updating arke.json')
       overwriteJson = True
-      jsonFileExists = isfile(j(floy.Core.paths['base'], 'floy.json'))
+      jsonFileExists = isfile(j(arke.Core.paths['base'], 'arke.json'))
 
       if(jsonFileExists):
         overwriteJson = ask(
-            '"floy.json" already exists. Overwrite it with the respective project type template?')
+            '"arke.json" already exists. Overwrite it with the respective project type template?')
 
-      with lcd(floy.Core.paths['base']):
+      with lcd(arke.Core.paths['base']):
         if(overwriteJson):
-          if(jsonFileExists and ask('Backup the current "floy.json"?')):
-            lbash('cp floy.json floy.json.bk')
-          lbash('cp -f %s/templates/floy/%s.json floy.json' %
-                (floy.Core.paths['auxFiles'], projectType))
-          floy.Core.loadOptions()
+          if(jsonFileExists and ask('Backup the current "arke.json"?')):
+            lbash('cp arke.json arke.json.bk')
+          lbash('cp -f %s/templates/arke/%s.json arke.json' %
+                (arke.Core.paths['auxFiles'], projectType))
+          arke.Core.loadOptions()
 
-      floy.Core.options['project']['type'] = projectType
-      floy.Core.saveOptions()
-      print green('>> Done updating floy.json')
+      arke.Core.options['project']['type'] = projectType
+      arke.Core.saveOptions()
+      print green('>> Done updating arke.json')
 
       print ''
       ask('Should configure the project git repository?') and self.git('setup')
@@ -108,14 +108,14 @@ class ProjectManager(ManagerBoilerplate):
 
   def install(self):
     print yellow('\n>> Executing project installation process')
-    projectType = floy.Core.options['project']['type']
+    projectType = arke.Core.options['project']['type']
 
-    runCommandList(floy.Core.options['project']['cmds']['install'],
-                   floy.Core.paths['base'],
+    runCommandList(arke.Core.options['project']['cmds']['install'],
+                   arke.Core.paths['base'],
                    True,
                    True)
 
-    with lcd(floy.Core.paths['base']), hide('running', 'output'):
+    with lcd(arke.Core.paths['base']), hide('running', 'output'):
       if(projectType == 'simple-wordpress' and ask('Configure wp-config.php?')):
         self.wp('configure', 'wp-config.php')
 
@@ -161,12 +161,12 @@ class ProjectManager(ManagerBoilerplate):
 
       templateName = fileToTemplateDict[confFileName]
 
-      with lcd(floy.Core.paths['base']), hide('running'):
-        if isfile(j(floy.Core.paths['base'], confFileName)) and ask('Backup old configuration file?'):
+      with lcd(arke.Core.paths['base']), hide('running'):
+        if isfile(j(arke.Core.paths['base'], confFileName)) and ask('Backup old configuration file?'):
           lbash('mv %s %s.bak' % (templateName, confFileName))
 
         lbash('cp -rf %s/templates/wp/%s %s' %
-              (floy.Core.paths['auxFiles'], templateName, confFileName))
+              (arke.Core.paths['auxFiles'], templateName, confFileName))
 
         for field in fields:
           if(field == 'ENVIRONMENT'):
@@ -202,15 +202,15 @@ class ProjectManager(ManagerBoilerplate):
     print yellow('\n>> Executing git "%s" subtask' % subtask)
     if(subtask == 'setup'):
       print red('Do not do this with an already commited project. The ".git" folder will be DELETED.')
-      repoUrl = floy.Core.options['project']['repo']
+      repoUrl = arke.Core.options['project']['repo']
 
-      if not ask('Use the url from "floy.json" (%s)?' % repoUrl):
+      if not ask('Use the url from "arke.json" (%s)?' % repoUrl):
         repoUrl = raw_input('\nType the repository origin url: ')
-        print cyan('\n>>> Updating repository origin url on floy.json')
-        floy.Core.options['project']['repo'] = repoUrl
-        floy.Core.saveOptions()
+        print cyan('\n>>> Updating repository origin url on arke.json')
+        arke.Core.options['project']['repo'] = repoUrl
+        arke.Core.saveOptions()
 
-      with lcd(floy.Core.paths['base']), hideOutput():
+      with lcd(arke.Core.paths['base']), hideOutput():
         print cyan('>>> Deleting old .git folder')
         lbash('rm -rf .git/')
         print cyan('>>> Initializing new git with origin as "%s"' % repoUrl)
@@ -227,7 +227,7 @@ class ProjectManager(ManagerBoilerplate):
     return returnValue
 
   def reset(self):
-    if ask('Should delete everything but "floy" files?'):
+    if ask('Should delete everything but "arke" files?'):
       print '\nType "0" to cancel\n'
       randomSum = -1
       randomNumber1 = randomNumber2 = 0
@@ -243,16 +243,16 @@ class ProjectManager(ManagerBoilerplate):
         exit(0)
 
       files = [
-          '.floy',
-          'floy.json',
+          '.arke',
+          'arke.json',
           'fabfile.py',
           '.git',
           '.gitignore',
           '.editorconfig',
           'readme.md'
       ]
-      print yellow('\n>> Deleting non-floy files and folders')
-      with lcd(floy.Core.paths['base']), hide('everything'), settings(warn_only=True):
+      print yellow('\n>> Deleting non-arke files and folders')
+      with lcd(arke.Core.paths['base']), hide('everything'), settings(warn_only=True):
         tmpDir = tempfile.mkdtemp()
         for f in files:
           lbash('cp -rf %s %s/' % (f, tmpDir))
@@ -275,7 +275,7 @@ class ProjectManager(ManagerBoilerplate):
     dumpname = '%s_%s.sql' % (dbname, time.strftime('%Y%m%d-%H%M%S'))
 
     remoteDir = '~/.dumps'
-    localDir = '%s/.dumps' % floy.Core.paths['base']
+    localDir = '%s/.dumps' % arke.Core.paths['base']
 
     remoteDump = '%s/%s' % (remoteDir, dumpname)
     localDump = '%s/%s' % (localDir, dumpname)

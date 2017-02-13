@@ -1,32 +1,32 @@
-"""Floy fabfile"""
+"""Arke fabfile"""
 # coding: utf-8
 
+import importlib
+import inspect
 import os
 import sys
-import inspect
-import importlib
 
 '''
-Adds the .floy/floy directory to python's include path.
-The 'sys.path....' line must come before the 'from floy import *' one.
+Adds the .arke/arke directory to python's include path.
+The 'sys.path....' line must come before the 'from arke import *' one.
 '''
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '.floy/'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '.arke/'))
 
 '''
-Importing floy module
+Importing arke module
 '''
-FLOY = importlib.import_module('floy')
+ARKE = importlib.import_module('arke')
 
 
 '''
-Initializes floy
+Initializes arke
 '''
 
-FLOY.Core.init(os.path.dirname(__file__))
-for method in inspect.getmembers(FLOY.Tasks):
-    if not method[0].startswith('_'):
-        setattr(
-            __import__(__name__),
-            method[0],
-            getattr(FLOY.Tasks, method[0])
-        )
+ARKE.Core.init(os.path.dirname(__file__))
+for method in inspect.getmembers(ARKE.Tasks):
+  if not method[0].startswith('_'):
+    setattr(
+        __import__(__name__),
+        method[0],
+        getattr(ARKE.Tasks, method[0])
+    )
