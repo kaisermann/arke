@@ -110,17 +110,21 @@ class ProjectManager(ManagerBoilerplate):
     print yellow('\n>> Executing project installation process')
     projectType = arke.Core.options['project']['type']
 
+    with lcd(arke.Core.paths['base']), hide('running', 'output'):
+      confFileName = 'wp-config.php'
+      if(projectType == 'bedrock-wordpress'):
+        confFileName = '.env'
+
+      if not isfile(j(arke.Core.paths['base'], confFileName)) and ask('Configure %s?' % confFileName):
+        self.wp('configure', confFileName)
+        print yellow('\n>> If you need to insert anything in your config file before the installation process,\nplease do it now.')
+        print 'Press any key when finished'
+        raw_input()
+
     runCommandList(arke.Core.options['project']['cmds']['install'],
                    arke.Core.paths['base'],
                    True,
                    True)
-
-    with lcd(arke.Core.paths['base']), hide('running', 'output'):
-      if(projectType == 'simple-wordpress' and ask('Configure wp-config.php?')):
-        self.wp('configure', 'wp-config.php')
-
-      elif(projectType == 'bedrock-wordpress' and ask('Configure .env?')):
-        self.wp('configure', '.env')
 
     print green('>> Done executing project installation process')
 
@@ -163,7 +167,7 @@ class ProjectManager(ManagerBoilerplate):
 
       with lcd(arke.Core.paths['base']), hide('running'):
         if isfile(j(arke.Core.paths['base'], confFileName)) and ask('Backup old configuration file?'):
-          lbash('mv %s %s.bak' % (templateName, confFileName))
+          lbash('mv %s %s.bak' % (confFileName, confFileName))
 
         lbash('cp -rf %s/templates/wp/%s %s' %
               (arke.Core.paths['auxFiles'], templateName, confFileName))
@@ -177,7 +181,7 @@ class ProjectManager(ManagerBoilerplate):
             if(field == 'WP_PREFIX'):
               fieldVal = fieldVal or 'wp_'
 
-          lbash("sed -i -e 's|{{ %s }}|%s|' %s" %
+          lbash("sed -i '' -e 's|{{ %s }}|%s|' %s" %
                 (field, fieldVal, confFileName))
 
       if(confFileName == '.env'):
