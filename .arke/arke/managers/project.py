@@ -196,7 +196,7 @@ class ProjectManager(ManagerBoilerplate):
 
     print green('>> Done executing git "%s" subtask' % subtask)
 
-  def git(self, subtask='', recursiveLevel=0):
+  def git(self, subtask=''):
     returnValue = None
 
     if(subtask == ''):
@@ -223,11 +223,7 @@ class ProjectManager(ManagerBoilerplate):
       print red('Invalid subtask')
       exit(1)
 
-    endlineChar = ''
-    if(recursiveLevel > 0):
-      endlineChar = '\n'
-
-    print green('>> Done executing git "%s" subtask%s' % (subtask, endlineChar))
+    print green('>> Done executing git "%s" subtask' % subtask)
     return returnValue
 
   def reset(self):
