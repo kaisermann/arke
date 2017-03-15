@@ -102,7 +102,7 @@ class ProjectManager(ManagerBoilerplate):
       print green('>> Done updating arke.json')
 
       print ''
-      ask('Should configure the project git repository?') and self.git('setup')
+      ask('%s\nShould configure the project git repository?' % red('Do not do this with an already commited project. The ".git" folder will be DELETED.')) and self.git('setup')
 
       self.install()
 
@@ -205,7 +205,6 @@ class ProjectManager(ManagerBoilerplate):
 
     print yellow('\n>> Executing git "%s" subtask' % subtask)
     if(subtask == 'setup'):
-      print red('Do not do this with an already commited project. The ".git" folder will be DELETED.')
       repoUrl = arke.Core.options['project']['repo']
 
       if not ask('Use the url from "arke.json" (%s)?' % repoUrl):
