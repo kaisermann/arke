@@ -110,16 +110,17 @@ class ProjectManager(ManagerBoilerplate):
     print yellow('\n>> Executing project installation process')
     projectType = arke.Core.options['project']['type']
 
-    with lcd(arke.Core.paths['base']), hide('running', 'output'):
-      confFileName = 'wp-config.php'
-      if(projectType == 'bedrock-wordpress'):
-        confFileName = '.env'
+    if projectType == 'bedrock-wordpress' or projectType == 'simple-wordpress':
+      with lcd(arke.Core.paths['base']), hide('running', 'output'):
+        confFileName = 'wp-config.php'
+        if(projectType == 'bedrock-wordpress'):
+          confFileName = '.env'
 
-      if not isfile(j(arke.Core.paths['base'], confFileName)) and ask('Configure %s?' % confFileName):
-        self.wp('configure', confFileName)
-        print yellow('\n>> If you need to insert anything in your config file before the installation process,\nplease do it now.')
-        print 'Press any key when finished'
-        raw_input()
+        if not isfile(j(arke.Core.paths['base'], confFileName)) and ask('Configure %s?' % confFileName):
+          self.wp('configure', confFileName)
+          print yellow('\n>> If you need to insert anything in your config file before the installation process,\nplease do it now.')
+          print 'Press any key when finished'
+          raw_input()
 
     runCommandList(arke.Core.options['project']['cmds']['install'],
                    arke.Core.paths['base'],
