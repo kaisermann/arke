@@ -196,15 +196,15 @@ class RemoteManager(ManagerBoilerplate):
 
     if ask('You want to continue with deploy "%s" to "%s"?' % (branch, env.name)):
       release_name = '%s_%s' % (strftime('%Y-%m-%d_%H-%M-%S'), branch)
-      print yellow('\n>> Creating new release')
-      with hideOutput():
-        lbash('git pull origin %s' % (branch))
-        lbash('git tag -a "%s" -m "%s"' % (release_name, env.name))
-        lbash('git push --tags')
-      print green('>> Done creating new release')
+      spec = pathspec.PathSpec.from_lines('gitwildmatch', spec.splitlines())
 
-      self.cloneRelease(release_name)
-      self.afterDeploy(release_name)
+      matches = spec.match_tree(projectDir)
+
+
+      with zipfile.ZipFile(join(arke.Core.paths['base'], '%s.zip' % (release_name)), 'w') as zipFile:
+        for match in matches:
+            absPath = path.join(projectDir, match)
+            zipFile.write(absPath, match)
 
   def cloneRelease(self, release_name):
     curReleaseDir = join(arke.Core.paths['releases'], release_name)

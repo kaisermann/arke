@@ -1,0 +1,17 @@
+/config/**
+/.env
+/composer.*
+/wp-cli.yml
+
+/web/index.php
+/web/wp-config.php
+/web/app/themes/**
+
+!yarn.lock
+
+!web/app/themes/*/assets/**
+!web/app/themes/*/.*
+!web/app/themes/*/gulpfile.js
+!web/app/themes/*/.crius/**
+!node_modules/
+!vendor/
