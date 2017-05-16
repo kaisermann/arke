@@ -7,6 +7,7 @@ import tempfile
 import time
 from os.path import join as j
 from os.path import isdir, isfile, relpath
+from time import strftime
 
 from fabric.api import *
 from fabric.colors import *
@@ -37,11 +38,12 @@ class ProjectManager(ManagerBoilerplate):
     with hide('running'):
       with lcd(targetDir):
         if(projectType == 'html' or projectType == 'php'):  # HTML OR PHP
-          print yellow('\n>> Downloading crius')
+          print yellow('\n>> Downloading hyperion')
           lbash(
-              'git clone --depth=1 --branch=master git@github.com:kaisermann/crius.git crius;')
-          lbash('rm -rf crius/{.git,.gitignore,readme.md}; mv crius/* .; rm -rf crius;', True)
-          print green('>> Done downloading crius')
+              'git clone --depth=1 --branch=master git@github.com:kaisermann/hyperion.git hyperion;')
+          lbash(
+              'rm -rf hyperion/{.git,.gitignore,readme.md}; mv hyperion/* .; rm -rf hyperion;', True)
+          print green('>> Done downloading hyperion')
 
           print yellow('\n>> Creating basic file structure')
           if(projectType == 'php'):
@@ -81,7 +83,7 @@ class ProjectManager(ManagerBoilerplate):
           lbash('rm -rf selene/.git; mv selene web/app/themes/;', True)
           print green('>> Done arranging project files')
 
-      print yellow('\n>> Updating arke.json')
+      print yellow('\n>> Updating arke.json and arke.deploy')
       overwriteJson = True
       jsonFileExists = isfile(j(arke.Core.paths['base'], 'arke.json'))
 
@@ -97,12 +99,17 @@ class ProjectManager(ManagerBoilerplate):
                 (arke.Core.paths['auxFiles'], projectType))
           arke.Core.loadOptions()
 
+        lbash('cp -f %s/templates/arke/%s.deploy arke.deploy' %
+              (arke.Core.paths['auxFiles'], projectType))
+        arke.Core.loadOptions()
+
       arke.Core.options['project']['type'] = projectType
       arke.Core.saveOptions()
-      print green('>> Done updating arke.json')
+      print green('>> Done updating arke.json and arke.deploy')
 
       print ''
-      ask('%s\nShould configure the project git repository?' % red('Do not do this with an already commited project. The ".git" folder will be DELETED.')) and self.git('setup')
+      ask('%s\nShould configure the project git repository?' % red(
+          'Do not do this with an already commited project. The ".git" folder will be DELETED.')) and self.git('setup')
 
       self.install()
 
@@ -226,6 +233,10 @@ class ProjectManager(ManagerBoilerplate):
     print green('>> Done executing git "%s" subtask' % subtask)
     return returnValue
 
+  def bundle(self, debug = ''):
+    release_name = '%s.deploy' % (strftime('%Y-%m-%d_%H-%M-%S'))
+    createBundle(release_name, arke.Core.paths['base'], debug == 'debug')
+
   def reset(self):
     if ask('Should delete everything but "arke" files?'):
       print '\nType "0" to cancel\n'
@@ -245,6 +256,7 @@ class ProjectManager(ManagerBoilerplate):
       files = [
           '.arke',
           'arke.json',
+          'arke.deploy',
           'fabfile.py',
           '.git',
           '.gitignore',
@@ -261,50 +273,3 @@ class ProjectManager(ManagerBoilerplate):
           lbash('cp -rf %s/%s ./' % (tmpDir, f))
         shutil.rmtree(tmpDir)
       print green('>> Done resetting')
-
-  def import_db(self):
-    if(env.host == None):
-      print red('Missing -H {host} flag.\nUsage: "fab project import_db -H hostToImportFrom" ')
-      exit(1)
-    print yellow('\n>> Starting DB import process from host(s): %s' % env.host)
-
-    dbuser = raw_input('Database user: ')
-    dbname = raw_input('Database name: ')
-    print ''
-
-    dumpname = '%s_%s.sql' % (dbname, time.strftime('%Y%m%d-%H%M%S'))
-
-    remoteDir = '~/.dumps'
-    localDir = '%s/.dumps' % arke.Core.paths['base']
-
-    remoteDump = '%s/%s' % (remoteDir, dumpname)
-    localDump = '%s/%s' % (localDir, dumpname)
-
-    with hide('running'):
-      print cyan('>>> Creating REMOTE folder: "%s"' % remoteDir)
-      run('mkdir -p %s' % remoteDir)
-
-      print cyan('>>> Creating LOCAL folder: "%s"' % remoteDir)
-      lbash('mkdir -p %s' % localDir)
-
-      print cyan('>>> Dumping "%s" onto REMOTE "%s"' % (dbname, remoteDir))
-      run('mysqldump -u %s -p %s > %s' % (dbuser, dbname, remoteDump))
-
-      print cyan('>>> Transfering dump file onto LOCAL "%s"' % localDir)
-      get(remoteDir, localDump)
-
-      print green('>> Done dumping to "%s"' % localDir)
-
-      print ''
-      if ask('Import last dump to a local database?'):
-        dbuser = raw_input('Local Database user: ')
-        dbpass = raw_input('Local Database password: ')
-        dbname = raw_input('Local Database name: ')
-        with hide('warnings', 'output'), settings(warn_only=True):
-          lbash('mysql -u %s -p%s -e "DROP DATABASE IF EXISTS %s";' %
-                (dbuser, dbpass, dbname))
-          lbash('mysql -u %s -p%s -e "CREATE DATABASE %s";' %
-                (dbuser, dbpass, dbname))
-          lbash('mysql -u %s -p%s %s < %s;' %
-                (dbuser, dbpass, dbname, localDump))
-        print green('>> Done importing to a local database')

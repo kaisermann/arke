@@ -1,0 +1,9 @@
+/build
+
+!yarn.lock
+
+# Arke bundles
+!*.deploy.zip
+
+!node_modules/
+!vendor/

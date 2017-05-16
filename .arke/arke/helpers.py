@@ -1,10 +1,34 @@
 import inspect
 import sys
-from os.path import join
+import zipfile
+from os.path import join, isfile
 
+import pathspec
 from fabric.api import *
 from fabric.colors import *
 from fabric.operations import local
+
+
+def createBundle(bundleName, baseDir, debug = False):
+  manifestPath = join(baseDir, 'arke.deploy')
+  if(isfile(manifestPath)):
+    print yellow('\n>> Creating new bundle "%s.zip"' % bundleName)
+
+    with open(manifestPath, 'r') as fh:
+      spec = pathspec.PathSpec.from_lines('gitwildmatch', fh)
+      matches = spec.match_tree(baseDir)
+
+    if(debug):
+      for match in matches:
+        print(match)
+    else:
+      with zipfile.ZipFile(join(baseDir, '%s.zip' % bundleName), 'w') as zipFile:
+        for match in matches:
+          zipFile.write(join(baseDir, match), match)
+    print green('>> Done Creating new bundle')
+  else:
+    print red('>> No "arke.deploy" found.')
+    sys.exit(0)
 
 
 def ask(question):
@@ -77,15 +101,3 @@ def runCommandList(list, rootPath='', isLocal=False, insertNewline=False):
             sudo(cmdInfo[1])
           else:
             run(cmdInfo[1])
-
-  def search_replace_db(self):
-    with hide('everything'), settings(warn_only=True):
-      isWpInstallation = lbash('wp core version')
-
-    if(isWpInstallation.return_code == 0):
-      while ask(yellow('Run wp cli search and replace?')):
-        oldTerm = raw_input('Old term: ')
-        newTerm = raw_input('New term: ')
-        lbash('wp search-replace "%s" "%s"' % (oldTerm, newTerm))
-    else:
-      print red('\n>> Not a WordPress installation.')

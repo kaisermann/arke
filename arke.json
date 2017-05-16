@@ -1,17 +1,21 @@
 {
   "project": {
     "repo": "git@github.com:user/repo.git", 
-    "type": "html", 
+    "type": "bedrock-wordpress", 
     "fileStructure": {
       "shared": [
         [
           "robots.txt"
-        ]
-      ], 
-      "toUpload": [
+        ], 
         [
-          "./dist", 
-          "./"
+          ".htaccess"
+        ], 
+        [
+          ".env"
+        ], 
+        [
+          "web/app/uploads", 
+          "uploads"
         ]
       ]
     }, 
@@ -19,6 +23,14 @@
       "install": [
         [
           "", 
+          "composer install"
+        ], 
+        [
+          "web/app/themes/selene", 
+          "composer install"
+        ], 
+        [
+          "web/app/themes/selene", 
           "yarn"
         ]
       ], 
@@ -26,6 +38,14 @@
         [
           "", 
           "rm -rf fabfile.py arke.json .arke readme.md .editorconfig"
+        ], 
+        [
+          "", 
+          "composer install"
+        ], 
+        [
+          "web/app/themes/selene", 
+          "composer install"
         ]
       ]
     }, 
@@ -39,7 +59,7 @@
       "name": "example.com", 
       "projectDir": "/var/www", 
       "projectPublicDir": "htdocs", 
-      "webRootDir": "", 
+      "webRootDir": "web", 
       "hostnames": "example.com www.example.com", 
       "webServerUser": "www-data", 
       "webServerGroup": "www-data", 

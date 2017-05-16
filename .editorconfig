@@ -1,3 +1,5 @@
+# editorconfig.org
+
 root = true
 
 [*]
@@ -5,19 +7,8 @@ indent_style = space
 indent_size = 2
 end_of_line = lf
 charset = utf-8
-trim_trailing_whitespace = auto
-insert_final_newline = auto
+trim_trailing_whitespace = true
+insert_final_newline = true
 
-[*.{php,html}]
-indent_style = tab
-indent_size = 2
-
-[*.{styl,css,scss,sass,less}]
-indent_style = tab
-indent_size = 2
-
-[*.txt]
-end_of_line = crlf
-
-[*.md]
-trim_trailing_whitespace = false
+[*.php]
+indent_size = 4

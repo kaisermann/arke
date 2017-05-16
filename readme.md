@@ -3,9 +3,8 @@
 ## Requirements
 * [Fabric](http://www.fabfile.org/)
 * [Jinja2](http://jinja.pocoo.org/)
-* [Arke](https://github.com/tuut/arke)
+* [pathspec](https://pypi.python.org/pypi/pathspec)
 * A [SSH Config](http://nerderati.com/2011/03/17/simplify-your-life-with-an-ssh-config-file/)
-* A deployable project
 
 ## Usage
 
@@ -27,11 +26,10 @@ fab {environment} service_reload
 Project-environment-only:
 
 fab project setup
+fab project bundle
 fab project install
 fab project reset
 fab project import_db
-fab project git:setup
-fab project wp:configure
 ```
 
 ## Documentation
@@ -49,9 +47,6 @@ fab project wp:configure
         [".htaccess"],
         [".env"],
         ["web/app/uploads", "uploads"]
-      ],
-      "toUpload": [
-        ["web/app/themes/selene/dist", "web/app/themes/selene/"]
       ]
     },
     "cmds": {
@@ -119,17 +114,6 @@ fab project wp:configure
     <br>
     <br>
     ["web/app/uploads", "uploads"] creates a links on the projects web/app/ directory to a uploads directory on the root of the project's shared folder.
-    </td>
-  </tr>
-  <tr>
-    <td>fileStructure.toUpload</td>
-    <td>A list of files/directories to be uploaded after each deploy. Useful for built files.
-    <br><br>
-    <strong>Syntax:</strong> [localPath, remotePath]
-    <br><br>
-    <strong>Examples:</strong>
-    <br><br>
-    ["web/app/themes/selene/dist", "web/app/themes/selene/"] uploads the local dist folder to the remote web/app/themes/selene/ directory.
     </td>
   </tr>
   <tr>

@@ -5,9 +5,6 @@
     "fileStructure": {
       "shared": [
         ["robots.txt"]
-      ],
-      "toUpload": [
-        ["./dist", "./"]
       ]
     },
     "cmds": {

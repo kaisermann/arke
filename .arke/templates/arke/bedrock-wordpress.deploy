@@ -1,3 +1,4 @@
+# Inclusions
 /config/**
 /.env
 /composer.*
@@ -5,10 +6,17 @@
 
 /web/index.php
 /web/wp-config.php
-/web/app/themes/**
+/web/app/**
 
+# Exclusions
 !yarn.lock
+!.gitkeep
 
+# Arke bundles
+!*.deploy.zip
+
+!web/app/uploads/**
+!web/app/plugins/**
 !web/app/themes/*/assets/**
 !web/app/themes/*/.*
 !web/app/themes/*/gulpfile.js

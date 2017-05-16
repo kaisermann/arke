@@ -8,9 +8,6 @@
         [".htaccess"],
         [".env"],
         ["web/app/uploads", "uploads"]
-      ],
-      "toUpload": [
-        ["web/app/themes/selene/dist", "web/app/themes/selene/"]
       ]
     },
     "cmds": {

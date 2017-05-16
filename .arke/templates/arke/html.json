@@ -5,9 +5,6 @@
     "fileStructure": {
       "shared": [
         ["robots.txt"]
-      ],
-      "toUpload": [
-        ["./dist", "./"]
       ]
     },
     "cmds": {
@@ -15,7 +12,8 @@
         ["", "yarn"]
       ],
       "afterDeploy": [
-        ["", "rm -rf fabfile.py arke.json .arke readme.md .editorconfig"]
+        ["", "rm -rf fabfile.py arke.json .arke readme.md .editorconfig"],
+        ["", "shopt -s dotglob; mv build/* .; rm -rf build; shopt -u dotglob"]
       ]
     },
     "maxReleases": 5

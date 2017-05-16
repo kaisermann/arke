@@ -1,0 +1,12 @@
+/wp-content
+/wp-admin
+/wp-includes
+/*
+
+!yarn.lock
+
+# Arke bundles
+!*.deploy.zip
+
+!node_modules/
+!vendor/

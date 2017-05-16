@@ -9,8 +9,8 @@ def checkRequisites():
   core.manager.checkRequisites()
 
 
-def deploy(branch):
-  core.manager.deploy(branch)
+def deploy():
+  core.manager.deploy()
 
 
 def service_restart(name):
@@ -37,17 +37,5 @@ def reset():
   core.manager.reset()
 
 
-def git(subtask = ''):
-  core.manager.git(subtask)
-
-
-def wp(subtask = ''):
-  core.manager.wp(subtask)
-
-
-def import_db():
-  core.manager.import_db()
-
-
-def search_replace_db():
-  core.manager.search_replace_db()
+def bundle(extra = ''):
+  core.manager.bundle(extra)

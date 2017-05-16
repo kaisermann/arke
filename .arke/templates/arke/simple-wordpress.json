@@ -8,9 +8,6 @@
         [".htaccess"],
         ["wp-config.php"],
         ["wp-content/uploads", "uploads"]
-      ],
-      "toUpload": [
-        ["wp-content/themes/selene/dist", "wp-content/themes/selene/"]
       ]
     },
     "cmds": {
