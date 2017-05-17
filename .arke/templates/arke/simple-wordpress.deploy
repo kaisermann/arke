@@ -1,11 +1,14 @@
+# Arke bundle manifest #
+
+# Inclusions #
 /wp-content
 /wp-admin
 /wp-includes
-/*
+/*.php
 
+# Exclusions #
 !yarn.lock
-
-# Arke bundles
+!.gitkeep
 !*.deploy.zip
 
 !node_modules/

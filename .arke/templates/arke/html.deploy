@@ -1,8 +1,11 @@
+# Arke bundle manifest #
+
+# Inclusions #
 /build
 
+# Exclusions #
 !yarn.lock
-
-# Arke bundles
+!.gitkeep
 !*.deploy.zip
 
 !node_modules/

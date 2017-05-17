@@ -1,6 +1,6 @@
 import sys
 import zipfile
-from os.path import join, isdir
+from os.path import isdir, join
 from time import strftime
 
 import pathspec
@@ -192,31 +192,53 @@ class RemoteManager(ManagerBoilerplate):
     print ''
     return isInstalled
 
-  def deploy(self):
+  def deploy(self, deployMode='bundle', optBranch='master'):
     baseDir = arke.Core.paths['base']
     if ask('You want to continue with deploy to "%s"?' % env.name):
-      
+
       print yellow('\n>> Beginning deployment')
-      if(isdir(join(baseDir, '.git'))):
-        print yellow('\n>> Pulling latest changes from repository')
-        lbash('git pull origin master')
-        print green('>> Done pulling latest changes from repository')
-      
-      release_name = '%s.deploy' % (strftime('%Y-%m-%d_%H-%M-%S'))
-      createBundle(release_name, baseDir, False)
 
-      self.uploadBundle(release_name)
-      self.afterDeploy(release_name)
-
-      print('')
-      if ask('Should delete local bundle zip file?'):
+      if(deployMode == 'git'):
+        release_name = '%s' % strftime('%Y-%m-%d_%H-%M-%S')
+        print yellow('\n>> Creating new release')
         with hideOutput():
-          lbash('rm -rf %s.zip' % release_name)
+          lbash('git pull origin %s' % optBranch)
+          lbash('git tag -a "%s" -m "%s"' % (release_name, env.name))
+          lbash('git push --tags')
+        print green('>> Done creating new release')
+        self.cloneRelease(release_name)
+        self.createSymbolicLinks(release_name)
+        self.afterDeploy(release_name)
+      else:
+        if(isdir(join(baseDir, '.git'))):
+          print yellow('\n>> Pulling latest changes from repository')
+          with hide('running'):
+            lbash('git pull origin master')
+          print green('>> Done pulling latest changes from repository')
+
+        release_name = '%s.deploy' % (strftime('%Y-%m-%d_%H-%M-%S'))
+        createBundle(release_name, baseDir, False)
+
+        self.uploadBundle(release_name)
+        self.createSymbolicLinks(release_name)
+        self.afterDeploy(release_name)
+
+        print('')
+        if ask('Should delete local bundle zip file?'):
+          with hideOutput():
+            lbash('rm -rf %s.zip' % release_name)
     print green('>> Done deploying')
+
+  def cloneRelease(self, release_name):
+    curReleaseDir = join(arke.Core.paths['releases'], release_name)
+    print yellow('\n>> Cloning newest release on remote server')
+    with hide('running'):
+      run('git clone --branch "%s" %s "%s"' %
+          (release_name, arke.Core.options['project']['repo'], curReleaseDir))
+    print green('>> Done cloning newest release')
 
   def uploadBundle(self, release_name):
     releaseZip = '%s.zip' % release_name
-    curReleaseDir = join(arke.Core.paths['releases'], release_name)
 
     print yellow('\n>> Uploading newest release to remote server')
     with hideOutput():
@@ -228,6 +250,8 @@ class RemoteManager(ManagerBoilerplate):
         sudo('unzip %s -d ./%s; rm -rf %s' % (releaseZip, release_name, releaseZip))
     print green('>> Done uploading newest release')
 
+  def createSymbolicLinks(self, release_name):
+    curReleaseDir = join(arke.Core.paths['releases'], release_name)
     print yellow('\n>> Creating links between shared files')
     for arr in arke.Core.options['project']['fileStructure']['shared']:
 
@@ -245,6 +269,22 @@ class RemoteManager(ManagerBoilerplate):
           sudo('rm -rf %s' % (nodeOriginFullPath))
         sudo('ln -sfv %s %s' % (nodeTargetFullPath, nodeOriginFullPath))
     print green('>> Done linking shared files and folders')
+    
+    if 'toUpload' in arke.Core.options['project']['fileStructure']:
+      print yellow('\n>> Sending all files/folders listed on "toUpload"')
+      for arr in arke.Core.options['project']['fileStructure']['toUpload']:
+   
+        if len(arr) == 1:
+          arr = [arr[0], arr[0]]
+   
+        nodeOriginFullPath = join(arke.Core.paths['base'], arr[0])
+        nodeTargetFullPath = join(curReleaseDir, arr[1])
+   
+        print cyan('>>> Uploading: %s -> %s' % tuple(arr))
+        with hideOutput():
+          upload_project(local_dir=nodeOriginFullPath,
+                          remote_dir=nodeTargetFullPath, use_sudo=True)
+      print green('>> Done uploading files and folders')
     self.fixPermissions()
 
   def afterDeploy(self, release_name):

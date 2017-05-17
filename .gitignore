@@ -18,7 +18,6 @@ sql-dump-*.sql
 .env
 .env.*
 !.env.example
-!./.arke/templates/wp/.env
 
 # Vendor (e.g. Composer)
 vendor/*
@@ -35,7 +34,6 @@ bin
 # Assets
 node_modules
 bower_components
-./dist
 
 # Arke
 *.pyc

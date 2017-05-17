@@ -16,6 +16,8 @@ Remote-only:
 
 fab {environment} setup
 fab {environment} deploy
+fab {environment} deploy:git
+fab {environment} deploy:git,branchName
 fab {environment} checkRequisites
 fab {environment} fixPermissions
 fab {environment} cleanup_releases
@@ -58,7 +60,7 @@ fab project import_db
         ["", "rm -rf fabfile.py arke.json readme.md .editorconfig"],
         ["", "composer install"],
         ["web/app/themes/selene", "composer install"]
-      ],      
+      ],
     },
     "maxReleases": 5
   },

@@ -9,8 +9,8 @@ def checkRequisites():
   core.manager.checkRequisites()
 
 
-def deploy():
-  core.manager.deploy()
+def deploy(deployMode = 'bundle', optBranch = 'master'):
+  core.manager.deploy(deployMode, optBranch)
 
 
 def service_restart(name):

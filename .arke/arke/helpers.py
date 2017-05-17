@@ -10,7 +10,7 @@ from fabric.operations import local
 
 
 def createBundle(bundleName, baseDir, debug = False):
-  manifestPath = join(baseDir, 'arke.deploy')
+  manifestPath = join(baseDir, '.deploy')
   if(isfile(manifestPath)):
     print yellow('\n>> Creating new bundle "%s.zip"' % bundleName)
 
@@ -27,7 +27,7 @@ def createBundle(bundleName, baseDir, debug = False):
           zipFile.write(join(baseDir, match), match)
     print green('>> Done Creating new bundle')
   else:
-    print red('>> No "arke.deploy" found.')
+    print red('>> No ".deploy" found.')
     sys.exit(0)
 
 

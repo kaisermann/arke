@@ -83,7 +83,7 @@ class ProjectManager(ManagerBoilerplate):
           lbash('rm -rf selene/.git; mv selene web/app/themes/;', True)
           print green('>> Done arranging project files')
 
-      print yellow('\n>> Updating arke.json and arke.deploy')
+      print yellow('\n>> Updating arke.json and .deploy')
       overwriteJson = True
       jsonFileExists = isfile(j(arke.Core.paths['base'], 'arke.json'))
 
@@ -99,13 +99,13 @@ class ProjectManager(ManagerBoilerplate):
                 (arke.Core.paths['auxFiles'], projectType))
           arke.Core.loadOptions()
 
-        lbash('cp -f %s/templates/arke/%s.deploy arke.deploy' %
+        lbash('cp -f %s/templates/arke/%s.deploy .deploy' %
               (arke.Core.paths['auxFiles'], projectType))
         arke.Core.loadOptions()
 
       arke.Core.options['project']['type'] = projectType
       arke.Core.saveOptions()
-      print green('>> Done updating arke.json and arke.deploy')
+      print green('>> Done updating arke.json and .deploy')
 
       print ''
       ask('%s\nShould configure the project git repository?' % red(
@@ -256,7 +256,7 @@ class ProjectManager(ManagerBoilerplate):
       files = [
           '.arke',
           'arke.json',
-          'arke.deploy',
+          '.deploy',
           'fabfile.py',
           '.git',
           '.gitignore',
