@@ -207,7 +207,7 @@ class RemoteManager(ManagerBoilerplate):
           lbash('git push --tags')
         print green('>> Done creating new release')
         self.cloneRelease(release_name)
-        self.createSymbolicLinks(release_name)
+        self.createSymbolicLinks(release_name, deployMode)
         self.afterDeploy(release_name)
       else:
         if(isdir(join(baseDir, '.git'))):
@@ -220,7 +220,7 @@ class RemoteManager(ManagerBoilerplate):
         createBundle(release_name, baseDir, False)
 
         self.uploadBundle(release_name)
-        self.createSymbolicLinks(release_name)
+        self.createSymbolicLinks(release_name, deployMode)
         self.afterDeploy(release_name)
 
         print('')
@@ -250,7 +250,7 @@ class RemoteManager(ManagerBoilerplate):
         sudo('unzip %s -d ./%s; rm -rf %s' % (releaseZip, release_name, releaseZip))
     print green('>> Done uploading newest release')
 
-  def createSymbolicLinks(self, release_name):
+  def createSymbolicLinks(self, release_name, deployMode):
     curReleaseDir = join(arke.Core.paths['releases'], release_name)
     print yellow('\n>> Creating links between shared files')
     for arr in arke.Core.options['project']['fileStructure']['shared']:
@@ -270,7 +270,7 @@ class RemoteManager(ManagerBoilerplate):
         sudo('ln -sfv %s %s' % (nodeTargetFullPath, nodeOriginFullPath))
     print green('>> Done linking shared files and folders')
     
-    if 'toUpload' in arke.Core.options['project']['fileStructure']:
+    if deployMode != 'bundle' and 'toUpload' in arke.Core.options['project']['fileStructure']:
       print yellow('\n>> Sending all files/folders listed on "toUpload"')
       for arr in arke.Core.options['project']['fileStructure']['toUpload']:
    
