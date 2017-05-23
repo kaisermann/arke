@@ -182,7 +182,7 @@ class ProjectManager(ManagerBoilerplate):
 
         for field in fields:
           if(field == 'ENVIRONMENT'):
-            fieldVal = 'DEVELOPMENT'
+            fieldVal = 'development'
           else:
             fieldVal = raw_input('Insert field %s: ' % field)
 
