@@ -226,7 +226,7 @@ class RemoteManager(ManagerBoilerplate):
         print('')
         if ask('Should delete local bundle zip file?'):
           with hideOutput():
-            lbash('rm -rf %s.zip' % release_name)
+            lbash('rm -rf %s.zip' % join(baseDir, release_name))
     print green('>> Done deploying')
 
   def cloneRelease(self, release_name):
@@ -269,17 +269,17 @@ class RemoteManager(ManagerBoilerplate):
           sudo('rm -rf %s' % (nodeOriginFullPath))
         sudo('ln -sfv %s %s' % (nodeTargetFullPath, nodeOriginFullPath))
     print green('>> Done linking shared files and folders')
-    
+
     if deployMode != 'bundle' and 'toUpload' in arke.Core.options['project']['fileStructure']:
       print yellow('\n>> Sending all files/folders listed on "toUpload"')
       for arr in arke.Core.options['project']['fileStructure']['toUpload']:
-   
+
         if len(arr) == 1:
           arr = [arr[0], arr[0]]
-   
+
         nodeOriginFullPath = join(arke.Core.paths['base'], arr[0])
         nodeTargetFullPath = join(curReleaseDir, arr[1])
-   
+
         print cyan('>>> Uploading: %s -> %s' % tuple(arr))
         with hideOutput():
           upload_project(local_dir=nodeOriginFullPath,
