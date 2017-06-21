@@ -27,7 +27,8 @@ class RemoteManager(ManagerBoilerplate):
 
       sitesAvailable = join(arke.Core.paths['nginx'], 'sites-available',
                             arke.Core.getEnvOption('name'))
-      sitesEnabled = join(arke.Core.paths['nginx'], 'sites-enabled', arke.Core.getEnvOption('name'))
+      sitesEnabled = join(
+          arke.Core.paths['nginx'], 'sites-enabled', arke.Core.getEnvOption('name'))
 
       # nginx setup
       if(isInstalled.has_key('ee') and isInstalled['ee'] and ask('Create website with EasyEngine?')):
@@ -99,6 +100,14 @@ class RemoteManager(ManagerBoilerplate):
           sudo('mv %s %s/' % (defaultWPConfig, arke.Core.paths['shared']))
         print green('>> Done moving default wp-config.php')
 
+      print ''
+      if(ask('Link htdocs/.well-known to shared/.well-known?')):
+        print yellow('\n>> Linking .well-known directory')
+        with hideOutput():
+          sudo('ln -sfv %s/.well-known %s/.well-known' %
+               (arke.Core.paths['publicHTML'], arke.Core.paths['shared']))
+        print green('>> Done linking .well-known')
+
     # .env
     print ''
     if ask('Upload .env?'):
@@ -135,17 +144,17 @@ class RemoteManager(ManagerBoilerplate):
     self.fixPermissions()
 
   def checkRequisites(self):
-    isInstalled = {}
+    isInstalled={}
     with hide('warnings', 'output'), settings(warn_only=True):
       # Check for nginx
       with hide('running'):
-        isInstalled['nginx'] = run('which nginx').return_code == 0
+        isInstalled['nginx']=run('which nginx').return_code == 0
 
       # Check for Composer
       with hide('running'):
-        result = run('which composer')
+        result=run('which composer')
 
-      isInstalled['composer'] = result.return_code == 0
+      isInstalled['composer']=result.return_code == 0
 
       print yellow('\n>> Checking for Composer')
       if not isInstalled['composer']:
@@ -161,9 +170,9 @@ class RemoteManager(ManagerBoilerplate):
       # Check for WP-CLI
       print yellow('\n>> Checking for WP-CLI')
       with hide('running'):
-        result = run('which wp')
+        result=run('which wp')
 
-      isInstalled['wp'] = result.return_code == 0
+      isInstalled['wp']=result.return_code == 0
 
       if not isInstalled['wp']:
         print yellow('\n>> Installing WP-CLI')
@@ -179,9 +188,9 @@ class RemoteManager(ManagerBoilerplate):
       # Check for easyengine
       print yellow('\n>> Checking for EasyEngine')
       with hide('running'):
-        result = run('which ee')
+        result=run('which ee')
 
-      isInstalled['ee'] = result.return_code == 0
+      isInstalled['ee']=result.return_code == 0
 
       if not isInstalled['ee'] and ask('Should install EasyEngine? '):
         print yellow('\n>> Installing EasyEngine')
@@ -193,13 +202,13 @@ class RemoteManager(ManagerBoilerplate):
     return isInstalled
 
   def deploy(self, deployMode='bundle', optBranch='master'):
-    baseDir = arke.Core.paths['base']
+    baseDir=arke.Core.paths['base']
     if ask('You want to continue with deploy to "%s"?' % env.name):
 
       print yellow('\n>> Beginning deployment')
 
       if(deployMode == 'git'):
-        release_name = '%s' % strftime('%Y-%m-%d_%H-%M-%S')
+        release_name='%s' % strftime('%Y-%m-%d_%H-%M-%S')
         print yellow('\n>> Creating new release')
         with hideOutput():
           lbash('git pull origin %s' % optBranch)
@@ -216,7 +225,7 @@ class RemoteManager(ManagerBoilerplate):
             lbash('git pull origin master')
           print green('>> Done pulling latest changes from repository')
 
-        release_name = '%s.deploy' % (strftime('%Y-%m-%d_%H-%M-%S'))
+        release_name='%s.deploy' % (strftime('%Y-%m-%d_%H-%M-%S'))
         createBundle(release_name, baseDir, False)
 
         self.uploadBundle(release_name)
@@ -230,7 +239,7 @@ class RemoteManager(ManagerBoilerplate):
     print green('>> Done deploying')
 
   def cloneRelease(self, release_name):
-    curReleaseDir = join(arke.Core.paths['releases'], release_name)
+    curReleaseDir=join(arke.Core.paths['releases'], release_name)
     print yellow('\n>> Cloning newest release on remote server')
     with hide('running'):
       run('git clone --branch "%s" %s "%s"' %
@@ -238,7 +247,7 @@ class RemoteManager(ManagerBoilerplate):
     print green('>> Done cloning newest release')
 
   def uploadBundle(self, release_name):
-    releaseZip = '%s.zip' % release_name
+    releaseZip='%s.zip' % release_name
 
     print yellow('\n>> Uploading newest release to remote server')
     with hideOutput():
@@ -247,19 +256,20 @@ class RemoteManager(ManagerBoilerplate):
           remote_dir=arke.Core.paths['releases'], use_sudo=True
       )
       with cd(arke.Core.paths['releases']):
-        sudo('unzip %s -d ./%s; rm -rf %s' % (releaseZip, release_name, releaseZip))
+        sudo('unzip %s -d ./%s; rm -rf %s' %
+             (releaseZip, release_name, releaseZip))
     print green('>> Done uploading newest release')
 
   def createSymbolicLinks(self, release_name, deployMode):
-    curReleaseDir = join(arke.Core.paths['releases'], release_name)
+    curReleaseDir=join(arke.Core.paths['releases'], release_name)
     print yellow('\n>> Creating links between shared files')
     for arr in arke.Core.options['project']['fileStructure']['shared']:
 
       if len(arr) == 1:
-        arr = [arr[0], arr[0]]
+        arr=[arr[0], arr[0]]
 
-      nodeOriginFullPath = join(curReleaseDir, arr[0])
-      nodeTargetFullPath = join(arke.Core.paths['shared'], arr[1])
+      nodeOriginFullPath=join(curReleaseDir, arr[0])
+      nodeTargetFullPath=join(arke.Core.paths['shared'], arr[1])
 
       print cyan('>>> Linking: current/%s -> shared/%s' % tuple(arr))
       with hideOutput():
@@ -275,20 +285,20 @@ class RemoteManager(ManagerBoilerplate):
       for arr in arke.Core.options['project']['fileStructure']['toUpload']:
 
         if len(arr) == 1:
-          arr = [arr[0], arr[0]]
+          arr=[arr[0], arr[0]]
 
-        nodeOriginFullPath = join(arke.Core.paths['base'], arr[0])
-        nodeTargetFullPath = join(curReleaseDir, arr[1])
+        nodeOriginFullPath=join(arke.Core.paths['base'], arr[0])
+        nodeTargetFullPath=join(curReleaseDir, arr[1])
 
         print cyan('>>> Uploading: %s -> %s' % tuple(arr))
         with hideOutput():
           upload_project(local_dir=nodeOriginFullPath,
-                          remote_dir=nodeTargetFullPath, use_sudo=True)
+                         remote_dir=nodeTargetFullPath, use_sudo=True)
       print green('>> Done uploading files and folders')
     self.fixPermissions()
 
   def afterDeploy(self, release_name):
-    curReleaseDir = join(arke.Core.paths['releases'], release_name)
+    curReleaseDir=join(arke.Core.paths['releases'], release_name)
 
     with hideOutput(), settings(warn_only=True):
       print yellow('\n>> Restarting services')
@@ -326,7 +336,7 @@ class RemoteManager(ManagerBoilerplate):
 
   def fixPermissions(self, folderPath=0):
     if(folderPath == 0):
-      folderPath = arke.Core.paths['project']
+      folderPath=arke.Core.paths['project']
 
     print yellow('\n>> Fixing project\'s permissions at \'%s\'' % folderPath)
     with hide('everything'):
@@ -340,11 +350,11 @@ class RemoteManager(ManagerBoilerplate):
   def cleanup_releases(self, keep):
     print yellow('\n>> Removing old releases...')
     with hide('everything'):
-      releases = self.list_releases()
+      releases=self.list_releases()
       releases.sort(reverse=True)
 
       for release in releases[int(keep):]:
-        release = release.strip()
+        release=release.strip()
         sudo('rm -rf %s/%s' % (arke.Core.paths['releases'], release))
     print green('>> Done removing old releases')
 
