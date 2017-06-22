@@ -5,6 +5,8 @@
 * [Jinja2](http://jinja.pocoo.org/)
 * [pathspec](https://pypi.python.org/pypi/pathspec)
 * A [SSH Config](http://nerderati.com/2011/03/17/simplify-your-life-with-an-ssh-config-file/)
+* `unzip` CLI command
+
 
 ## Usage
 
