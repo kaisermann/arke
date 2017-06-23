@@ -242,7 +242,7 @@ class RemoteManager(ManagerBoilerplate):
     curReleaseDir=join(arke.Core.paths['releases'], release_name)
     print yellow('\n>> Cloning newest release on remote server')
     with hide('running'):
-      run('git clone --branch "%s" %s "%s"' %
+      sudo('git clone --branch "%s" %s "%s"' %
           (release_name, arke.Core.options['project']['repo'], curReleaseDir))
     print green('>> Done cloning newest release')
 
