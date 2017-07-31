@@ -33,17 +33,23 @@ class RemoteManager(ManagerBoilerplate):
       # nginx setup
       if(isInstalled.has_key('ee') and isInstalled['ee'] and ask('Create website with EasyEngine?')):
         installationMode = 'ee'
-        typeFlags = ['html', 'php', 'mysql', 'wp', 'wpfc']
+        eeFlags = [
+          '--html',
+          '--php --php7',
+          '--mysql --php7',
+          '--wp --php7',
+          '--wpfc --php7'
+        ]
 
         print yellow('\n>> Creating site with EasyEngine')
-        siteType = typeFlags[whichOption(['HTML', 'PHP', 'PHP \ MySQL',
+        siteFlags = eeFlags[whichOption(['HTML', 'PHP', 'PHP \ MySQL',
                                           'Wordpress', 'Wordpress + FastCGI Cache'],
                                          'Choose a website type',
                                          'Type: ')]
 
         with hide('warnings'), settings(warn_only=True):
-          sudo('ee site create --%s %s' %
-               (siteType, arke.Core.getEnvOption('name')))
+          sudo('ee site create %s %s' %
+               (siteFlags, arke.Core.getEnvOption('name')))
 
         with hideOutput():
           # Appends /current to the server block root path
