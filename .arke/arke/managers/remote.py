@@ -207,13 +207,14 @@ class RemoteManager(ManagerBoilerplate):
 
       print yellow('\n>> Beginning deployment')
 
-      print yellow('\n>> Running before-deploy commands')
-      with hide('running'):
-        runCommandList(arke.Core.options['project']['cmds']['beforeDeploy'],
-                       arke.Core.paths['base'],
-                       True,
-                       True)
-      print green('>> Done running before-deploy commands')
+      if 'beforeDeploy' in arke.Core.options['project']['cmds']:
+        print yellow('\n>> Running before-deploy commands')
+        with hide('running'):
+          runCommandList(arke.Core.options['project']['cmds']['beforeDeploy'],
+                         arke.Core.paths['base'],
+                         True,
+                         True)
+        print green('>> Done running before-deploy commands')
 
       if(deployMode == 'git'):
         release_name='%s' % strftime('%Y-%m-%d_%H-%M-%S')
@@ -319,12 +320,13 @@ class RemoteManager(ManagerBoilerplate):
         self.service_reload(service)
       print green('>> Done reloading services')
 
-    print yellow('\n>> Running after-deploy commands')
-    with hide('running'):
-      runCommandList(arke.Core.options['project']['cmds']['afterDeploy'],
-                     curReleaseDir,
-                     False)
-    print green('>> Done running after-deploy commands')
+    if 'afterDeploy' in arke.Core.options['project']['cmds']:
+      print yellow('\n>> Running after-deploy commands')
+      with hide('running'):
+        runCommandList(arke.Core.options['project']['cmds']['afterDeploy'],
+                       curReleaseDir,
+                       False)
+      print green('>> Done running after-deploy commands')
 
     # Links latest release to the current directory
     print yellow('\n>> Linking "current" directory to newest release')
