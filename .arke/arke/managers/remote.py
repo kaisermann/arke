@@ -246,11 +246,6 @@ class RemoteManager(ManagerBoilerplate):
         self.uploadBundle(release_name)
         self.createSymbolicLinks(release_name, deployMode)
         self.afterDeploy(release_name)
-
-        print('')
-        if ask('Should delete local bundle zip file?'):
-          with hideOutput():
-            lbash('rm -rf %s.zip' % join(baseDir, release_name))
     print green('>> Done deploying')
 
   def cloneRelease(self, release_name):
