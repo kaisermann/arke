@@ -3,6 +3,9 @@
     "repo": "git@github.com:user/repo.git",
     "type": "html",
     "fileStructure": {
+      "toUpload": [
+        ["./build", "./"]
+      ],
       "shared": [
         ["robots.txt"]
       ]

@@ -3,6 +3,9 @@
     "repo": "git@github.com:user/repo.git",
     "type": "bedrock-wordpress",
     "fileStructure": {
+      "toUpload": [
+        ["web/app/themes/selene/dist", "web/app/themes/selene"],
+      ],
       "shared": [
         ["robots.txt"],
         [".htaccess"],

@@ -3,6 +3,9 @@
     "repo": "git@github.com:user/repo.git",
     "type": "php",
     "fileStructure": {
+      "toUpload": [
+        ["./dist", "./"]
+      ],
       "shared": [
         ["robots.txt"]
       ]

@@ -3,6 +3,9 @@
     "repo": "git@github.com:user/repo.git",
     "type": "simple-wordpress",
     "fileStructure": {
+      "toUpload": [
+        ["wp-content/themes/dist", "wp-content/themes/"]
+      ],
       "shared": [
         ["robots.txt"],
         [".htaccess"],
