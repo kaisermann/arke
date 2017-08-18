@@ -268,7 +268,7 @@ class RemoteManager(ManagerBoilerplate):
       with cd(arke.Core.paths['releases']):
         sudo('unzip %s -d ./%s; rm -rf %s' %
              (releaseZip, release_name, releaseZip))
-      lbash('rm -rf %s.zip' % join(baseDir, release_name))
+      lbash('rm -f %s.zip' % releaseZip)
     print green('>> Done uploading newest release')
 
   def createSymbolicLinks(self, release_name, deployMode):
