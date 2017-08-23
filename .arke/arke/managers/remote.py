@@ -35,7 +35,7 @@ class RemoteManager(ManagerBoilerplate):
         installationMode = 'ee'
         eeFlags = [
           '--html',
-          '--php --php7',
+          '--php7',
           '--mysql --php7',
           '--wp --php7',
           '--wpfc --php7'

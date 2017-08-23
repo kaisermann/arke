@@ -106,11 +106,6 @@ class ProjectManager(ManagerBoilerplate):
       arke.Core.options['project']['type'] = projectType
       arke.Core.saveOptions()
       print green('>> Done updating arke.json and .deploy')
-
-      print ''
-      ask('%s\nShould configure the project git repository?' % red(
-          'Do not do this with an already commited project. The ".git" folder will be DELETED.')) and self.git('setup')
-
       self.install()
 
   def install(self):
@@ -203,35 +198,6 @@ class ProjectManager(ManagerBoilerplate):
       exit(1)
 
     print green('>> Done executing git "%s" subtask' % subtask)
-
-  def git(self, subtask=''):
-    returnValue = None
-
-    if(subtask == ''):
-      print red('Missing subtask')
-      exit(1)
-
-    print yellow('\n>> Executing git "%s" subtask' % subtask)
-    if(subtask == 'setup'):
-      repoUrl = arke.Core.options['project']['repo']
-
-      if not ask('Use the url from "arke.json" (%s)?' % repoUrl):
-        repoUrl = raw_input('\nType the repository origin url: ')
-        print cyan('\n>>> Updating repository origin url on arke.json')
-        arke.Core.options['project']['repo'] = repoUrl
-        arke.Core.saveOptions()
-
-      with lcd(arke.Core.paths['base']), hideOutput():
-        print cyan('>>> Deleting old .git folder')
-        lbash('rm -rf .git/')
-        print cyan('>>> Initializing new git with origin as "%s"' % repoUrl)
-        lbash('git init; git remote add origin %s' % repoUrl)
-    else:
-      print red('Invalid subtask')
-      exit(1)
-
-    print green('>> Done executing git "%s" subtask' % subtask)
-    return returnValue
 
   def bundle(self, debug = ''):
     release_name = '%s.deploy' % (strftime('%Y-%m-%d_%H-%M-%S'))
