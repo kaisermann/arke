@@ -14,12 +14,12 @@
       ]
     },
     "cmds": {
-      "beforeDeploy": [
-        ["web/app/themes/selene", "yarn build:production"]
-      ],
       "install": [
         ["wp-content/themes/selene", "composer install"],
         ["wp-content/themes/selene", "yarn"]
+      ],
+      "beforeDeploy": [
+        ["web/app/themes/selene", "yarn build:production"]
       ],
       "afterDeploy": [
         ["", "rm -rf fabfile.py arke.json .arke readme.md .editorconfig"],

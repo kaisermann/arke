@@ -11,11 +11,11 @@
       ]
     },
     "cmds": {
-      "beforeDeploy": [
-        ["web/app/themes/selene", "yarn build:production"]
-      ],
       "install": [
         ["", "yarn"]
+      ],
+      "beforeDeploy": [
+        ["web/app/themes/selene", "yarn build:production"]
       ],
       "afterDeploy": [
         ["", "rm -rf fabfile.py arke.json .arke readme.md .editorconfig"],
