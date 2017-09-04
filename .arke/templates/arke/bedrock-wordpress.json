@@ -4,7 +4,7 @@
     "type": "bedrock-wordpress",
     "fileStructure": {
       "toUpload": [
-        ["web/app/themes/selene/dist", "web/app/themes/selene"],
+        ["web/app/themes/selene/dist", "web/app/themes/selene"]
       ],
       "shared": [
         ["robots.txt"],
@@ -14,6 +14,9 @@
       ]
     },
     "cmds": {
+      "beforeDeploy": [
+        ["web/app/themes/selene", "yarn build:production"]
+      ],
       "install": [
         ["", "composer install"],
         ["web/app/themes/selene", "composer install"],
@@ -38,7 +41,7 @@
       "webServerUser": "www-data",
       "webServerGroup": "www-data",
       "services": {
-        "toRestart": ["php5.6-fpm"],
+        "toRestart": ["php7.0-fpm"],
         "toReload": ["nginx"]
       }
     }

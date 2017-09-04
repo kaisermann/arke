@@ -14,6 +14,9 @@
       ]
     },
     "cmds": {
+      "beforeDeploy": [
+        ["web/app/themes/selene", "yarn build:production"]
+      ],
       "install": [
         ["wp-content/themes/selene", "composer install"],
         ["wp-content/themes/selene", "yarn"]
@@ -36,7 +39,7 @@
       "webServerUser": "www-data",
       "webServerGroup": "www-data",
       "services": {
-        "toRestart": ["php5.6-fpm"],
+        "toRestart": ["php7.0-fpm"],
         "toReload": ["nginx"]
       }
     }

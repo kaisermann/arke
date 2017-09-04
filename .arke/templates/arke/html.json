@@ -11,6 +11,9 @@
       ]
     },
     "cmds": {
+      "beforeDeploy": [
+        ["web/app/themes/selene", "yarn build:production"]
+      ],
       "install": [
         ["", "yarn"]
       ],
