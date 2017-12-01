@@ -17,10 +17,10 @@
       "install": [
         ["", "composer install"],
         ["web/app/themes/selene", "composer install"],
-        ["web/app/themes/selene", "yarn"]
+        ["web/app/themes/selene", "npm install"]
       ],
       "beforeDeploy": [
-        ["web/app/themes/selene", "yarn build:production"]
+        ["web/app/themes/selene", "npm run build:production"]
       ],
       "afterDeploy": [
         ["", "rm -rf fabfile.py arke.json .arke readme.md .editorconfig"],
