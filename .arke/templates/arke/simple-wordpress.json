@@ -4,7 +4,7 @@
     "type": "simple-wordpress",
     "fileStructure": {
       "toUpload": [
-        ["wp-content/themes/dist", "wp-content/themes/"]
+        ["wp-content/themes/selene/dist", "wp-content/themes/"]
       ],
       "shared": [
         ["robots.txt"],
