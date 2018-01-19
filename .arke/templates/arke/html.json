@@ -3,19 +3,14 @@
     "repo": "git@github.com:user/repo.git",
     "type": "html",
     "fileStructure": {
-      "toUpload": [
-        ["./build", "./"]
-      ],
-      "shared": [
-        ["robots.txt"]
-      ]
+      "toUpload": [["./build", "./"]],
+      "shared": [["robots.txt"]]
     },
     "cmds": {
-      "install": [
-        ["", "npm install"]
-      ],
+      "install": [["", "npm install"]],
       "beforeDeploy": [
-        ["web/app/themes/selene", "npm run build:production"]
+        ["production", "./", "npm run build:production"],
+        ["staging", "./", "npm run build"]
       ],
       "afterDeploy": [
         ["", "rm -rf fabfile.py arke.json .arke readme.md .editorconfig"],

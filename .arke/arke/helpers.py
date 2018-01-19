@@ -9,7 +9,7 @@ from fabric.colors import *
 from fabric.operations import local
 
 
-def createBundle(bundleName, baseDir, debug = False):
+def createBundle(bundleName, baseDir, debug=False):
   manifestPath = join(baseDir, '.deploy')
   if(isfile(manifestPath)):
     print yellow('\n>> Creating new bundle "%s.zip"' % bundleName)
@@ -87,6 +87,12 @@ def runCommandList(list, rootPath='', isLocal=False, insertNewline=False):
 
     if(len(cmdInfo) == 1):
       cmdInfo = ['', cmdInfo[0]]
+
+    if(len(cmdInfo) == 3):
+      if(cmdInfo[0] != env.name):
+        continue
+      else:
+        cmdInfo.pop(0)
 
     cmdPath = join(rootPath, cmdInfo[0])
 

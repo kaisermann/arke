@@ -3,9 +3,7 @@
     "repo": "git@github.com:user/repo.git",
     "type": "simple-wordpress",
     "fileStructure": {
-      "toUpload": [
-        ["wp-content/themes/selene/dist", "wp-content/themes/"]
-      ],
+      "toUpload": [["wp-content/themes/selene/dist", "wp-content/themes/"]],
       "shared": [
         ["robots.txt"],
         [".htaccess"],
@@ -19,7 +17,8 @@
         ["wp-content/themes/selene", "npm"]
       ],
       "beforeDeploy": [
-        ["wp-content/themes/selene", "npm run build:production"]
+        ["production", "wp-content/themes/selene", "npm run build:production"],
+        ["staging", "wp-content/themes/selene", "npm run build"]
       ],
       "afterDeploy": [
         ["", "rm -rf fabfile.py arke.json .arke readme.md .editorconfig"],

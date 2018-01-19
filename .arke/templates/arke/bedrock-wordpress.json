@@ -3,9 +3,7 @@
     "repo": "git@github.com:user/repo.git",
     "type": "bedrock-wordpress",
     "fileStructure": {
-      "toUpload": [
-        ["web/app/themes/selene/dist", "web/app/themes/selene"]
-      ],
+      "toUpload": [["web/app/themes/selene/dist", "web/app/themes/selene"]],
       "shared": [
         ["robots.txt"],
         [".htaccess"],
@@ -20,7 +18,8 @@
         ["web/app/themes/selene", "npm install"]
       ],
       "beforeDeploy": [
-        ["web/app/themes/selene", "npm run build:production"]
+        ["production", "web/app/themes/selene", "npm run build:production"],
+        ["staging", "web/app/themes/selene", "npm run build"]
       ],
       "afterDeploy": [
         ["", "rm -rf fabfile.py arke.json .arke readme.md .editorconfig"],
