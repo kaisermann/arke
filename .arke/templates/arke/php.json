@@ -7,7 +7,7 @@
       "shared": [["robots.txt"]]
     },
     "cmds": {
-      "install": [["", "npm"]],
+      "install": [["", "npm install"]],
       "beforeDeploy": [
         ["production", "./", "npm run build:production"],
         ["staging", "./", "npm run build"]
