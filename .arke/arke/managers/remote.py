@@ -21,10 +21,9 @@ class RemoteManager(ManagerBoilerplate):
     isInstalled = self.checkRequisites()
     sitesAvailable = ''
     sitesEnabled = ''
+    installationMode = 'manual'
 
     if(isInstalled.has_key('nginx') and isInstalled['nginx']):
-      installationMode = 'manual'
-
       sitesAvailable = join(arke.Core.paths['nginx'], 'sites-available',
                             arke.Core.getEnvOption('name'))
       sitesEnabled = join(
